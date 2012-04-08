@@ -97,7 +97,8 @@ USE_RC_SUBR=	epmd.sh
 GNU_CONFIGURE=	yes
 ONLY_FOR_ARCHS=	i386 amd64 sparc64 powerpc
 REINPLACE_ARGS=	-i
-MAKE_JOBS_UNSAFE=	yes
+# From R15B01 parallel make is available
+MAKE_JOBS_SAFE=	yes
 
 .if (${OSVERSION} < 700000)
 USE_GCC=	4.2+

@@ -8,7 +8,17 @@ This Port is highly experimental.
 
 Current version is for R15B01, tested on 9.0-RELEASE/amd64 and 8.2-RELEASE/i386.
 
-In this Port parallel make is enabled. (aka `MAKE_JOBS_SAFE = true`)
+## Notes
+
+In this Port parallel make is enabled. (aka `MAKE_JOBS_SAFE = true`))
+
+`USE_OPENSSL` for enabling `bsd.openssl.mk` does not seem to work, 
+so it is not explicitly set in the `Makefile`. 
+The library search path decides what to link,
+and it seems `/usr/local/lib` takes precedence over `/usr/lib`.
+You can verify which one is linked by
+`objdump -x /usr/local/lib/erlang/lib/crypto-MODULE_VERSION/priv/lib/crypto.so`
+and check out the version numbers for `libssl.so.*`.
 
 ## DTrace support
 

@@ -224,13 +224,17 @@ pre-configure:
 .endif
 
 # If X11 is not used, skip the gs application.
-.if empty{PORT_OPTIONS:MX11}
-	@${ECHO_CMD} "WITHOUT_X11 defined" > ${WRKSRC}/lib/gs/SKIP
+.if ${PORT_OPTIONS:MX11}
+	# do nothing
+.else
+	@${ECHO_CMD} "X11 disabled" > ${WRKSRC}/lib/gs/SKIP
 .endif
 
 # If ODBC is not used, skip the odbc application.
-.if empty{PORT_OPTIONS:MODBC}
-	@${ECHO_CMD} "WITHOUT_ODBC defined" > ${WRKSRC}/lib/odbc/SKIP
+.if ${PORT_OPTIONS:MODBC}
+	# do nothing
+.else
+	@${ECHO_CMD} "ODBC disabled" > ${WRKSRC}/lib/odbc/SKIP
 .endif
 
 # Install documentation. (HTML docs need to be in same dir as the

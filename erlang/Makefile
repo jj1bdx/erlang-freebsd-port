@@ -224,12 +224,12 @@ pre-configure:
 .endif
 
 # If X11 is not used, skip the gs application.
-.if defined(WITHOUT_X11)
+.if empty{PORT_OPTIONS:MX11}
 	@${ECHO_CMD} "WITHOUT_X11 defined" > ${WRKSRC}/lib/gs/SKIP
 .endif
 
 # If ODBC is not used, skip the odbc application.
-.if defined(WITHOUT_ODBC)
+.if empty{PORT_OPTIONS:MODBC}
 	@${ECHO_CMD} "WITHOUT_ODBC defined" > ${WRKSRC}/lib/odbc/SKIP
 .endif
 

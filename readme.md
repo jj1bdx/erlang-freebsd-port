@@ -22,6 +22,9 @@ You can verify which one is linked by
 `objdump -x /usr/local/lib/erlang/lib/crypto-MODULE_VERSION/priv/lib/crypto.so`
 and check out the version numbers for `libssl.so.*`.
 
+Native Libraries compilation flag is now supported;
+On amd64, however, it does not work on the libraries yet.
+
 ## DTrace support
 
 <http://wiki.freebsd.org/DTrace> is a must read for testing DTrace.

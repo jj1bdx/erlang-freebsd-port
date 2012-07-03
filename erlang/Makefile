@@ -44,12 +44,14 @@ CONFLICTS?=	erlang-lite-r[0-9]*
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
 
-OPTIONS_DEFINE=	DTRACE HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX X11
+OPTIONS_DEFINE=	DTRACE HIPE NATIVELIBS JAVA KQUEUE ODBC \
+		OPENSSL SCTP SMP THREADS WX X11
 OPTIONS_SINGLE=	ODBC
 OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
 
 DTRACE_DESC=	Enable DTrace support
 HIPE_DESC=	Build native HiPE compiler
+NATIVELIBS_DESC=	Enable Native Libraries
 JAVA_DESC=	Enable Java applications
 KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
 ODBC_DESC=	Enable ODBC support
@@ -77,14 +79,6 @@ CONFIGURE_ARGS+=--disable-ssl
 
 ## local mods
 #USE_GCC=        4.5+
-#WITHOUT_JAVA=   true
-#WITH_X11=       true
-#WITH_WX=        true
-#WITHOUT_ODBC=   true
-#WITH_SMP=       true
-## .undef is required for overriding options in "make config"
-#.undef WITHOUT_DTRACE
-#WITH_DTRACE=	true
 ## end local mods
 
 # The Java applications that are part of the Erlang distribution are
@@ -110,6 +104,14 @@ CONFIGURE_ARGS+=--without-javac
 CONFIGURE_ARGS+=--enable-hipe
 .else
 CONFIGURE_ARGS+=--disable-hipe
+.endif
+
+# Native Libraries are still experimental
+# at least on FreeBSD/amd64
+.if ${PORT_OPTIONS:MNATIVELIBS}
+CONFIGURE_ARGS+=--enable-native-libs
+.else
+CONFIGURE_ARGS+=--disable-native-libs
 .endif
 
 .if ${PORT_OPTIONS:MKQUEUE}

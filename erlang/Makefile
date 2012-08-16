@@ -60,7 +60,7 @@ GS_DESC=	Enable GS application (deprecated)
 
 ## local mods
 ## non-standard flags
-DTRACE_DESC=	Enable DTrace support (experimental, build with root)
+DTRACE_DESC=	Enable DTrace support (experimental)
 NATIVELIBS_DESC=	Enable Native Libraries
 PARALLELMAKE_DESC=	Enable parallel make (experimental)
 JAVA_DESC=	Enable Java applications

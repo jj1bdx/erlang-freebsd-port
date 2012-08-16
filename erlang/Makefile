@@ -1,31 +1,33 @@
-# New ports collection makefile for:	erlang
 # This is a private port Makefile for Erlang
 
+# New ports collection makefile for:	erlang
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.170 2011/12/03 20:50:21 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.177 2012/08/15 20:17:48 olgeni Exp $
 #
 
 PORTNAME=	erlang
-PORTVERSION=	r15b01
-PORTREVISION=	2
-PORTEPOCH=	1
+DISTVERSION=	R15B01
+PORTVERSION=	15.b.01
+PORTEPOCH=	2
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
-		http://erlang.stacken.kth.se/download/:erlangorg	\
-		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
-		http://www.erlang.se/doc/:erlangse			\
-		http://www.erlang.se/publications/:publications		\
-		http://www.sics.se/~joe/thesis/:joe			\
-		${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
-DISTNAME=	otp_src_R15B01
+	http://erlang.stacken.kth.se/download/:erlangorg	\
+	http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
+	http://www.erlang.se/doc/:erlangse			\
+	http://www.erlang.se/publications/:publications		\
+	http://www.sics.se/~joe/thesis/:joe			\
+	${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
+DISTNAME=	otp_src_${DISTVERSION}
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX}:erlangorg	\
-		${ERLANG_MAN}:erlangorg			\
-		${ERLANG_DOCS}:erlangorg		\
-		${DOC_DISTFILES}
+	${ERLANG_MAN}:erlangorg			\
+	${ERLANG_DOCS}:erlangorg		\
+	${DOC_DISTFILES}
 DIST_SUBDIR=	erlang
 EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
+
+CONFLICTS=	erlang-14*
 
 PATCH_SITES=	http://www.erlang.org/download
 
@@ -33,77 +35,55 @@ MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
 
 DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
-		bjarnelic.pdf:publications		\
-		erlang-book-part1.pdf:erlangorg		\
-		master_thesis_patterns.pdf:local	\
-		mnesia_overview.pdf:publications	\
-		programming_rules.pdf:erlangse
-
-CONFLICTS?=	erlang-lite-r[0-9]*
+	bjarnelic.pdf:publications		\
+	erlang-book-part1.pdf:erlangorg		\
+	master_thesis_patterns.pdf:local	\
+	mnesia_overview.pdf:publications	\
+	programming_rules.pdf:erlangse
 
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
 
-OPTIONS_DEFINE=	DTRACE HIPE NATIVELIBS JAVA KQUEUE ODBC \
-		OPENSSL SCTP SMP THREADS WX X11
+OPTIONS_DEFINE=	DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX \
+## local mods
+		DTRACE NATIVELIBS PARALLELMAKE
+## local mods end
 OPTIONS_SINGLE=	ODBC
 OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
 
-DTRACE_DESC=	Enable DTrace support
 HIPE_DESC=	Build native HiPE compiler
-NATIVELIBS_DESC=	Enable Native Libraries
-JAVA_DESC=	Enable Java applications
 KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
+SCTP_DESC=	Enable SCTP support
+SMP_DESC=	Enable SMP support
+WX_DESC=	Enable WX application
+GS_DESC=	Enable GS application (deprecated)
+
+## local mods
+## non-standard flags
+DTRACE_DESC=	Enable DTrace support (experimental, build with root)
+NATIVELIBS_DESC=	Enable Native Libraries
+PARALLELMAKE_DESC=	Enable parallel make (experimental)
+JAVA_DESC=	Enable Java applications
+OPENSSL_DESC=	Enable OpenSSL support
+THREADS_DESC=	Enable thread support
+X11_DESC=	Enable X11 support
 ODBC_DESC=	Enable ODBC support
 UNIXODBC_DESC=	Build with unixODBC support
 IODBC_DESC=	Build with libiodbc support
-OPENSSL_DESC=	Enable OpenSSL support
-SCTP_DESC=	Enable SCTP support
-SMP_DESC=	Enable SMP support
-THREADS_DESC=	Enable thread support
-WX_DESC=	Enable WX extensions
-X11_DESC=	Enable X11 support
+## local mods end
 
-OPTIONS_DEFAULT=	SMP OPENSSL THREADS SCTP KQUEUE
+OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
 .include <bsd.port.options.mk>
 
-.if ${PORT_OPTIONS:MOPENSSL}
-USE_OPENSSL=YES
-CONFIGURE_ARGS+=--enable-ssl=${OPENSSLBASE} --enable-dynamic-ssl-lib
-.else
-CONFIGURE_ARGS+=--disable-ssl
-.endif
-
-.include <bsd.port.pre.mk>
-
 ## local mods
+
 #USE_GCC=        4.5+
-## end local mods
 
-# The Java applications that are part of the Erlang distribution are
-# not strictly necessary - it is included for completeness sake. A
-# problem with the Erlang build procedure is that it only checks if
-# javac is in the regular path - and then assumes that all of the jdk
-# utilities is in the path as well. The only way to make sure that
-# this is the case (that I could think of at least) was to make sure
-# ${JAVA_HOME}/bin is added to the PATH, using the *_ENV macros.
-
-.if ${PORT_OPTIONS:MJAVA}
-USE_JAVA=	yes
-JAVA_VERSION=	1.5+
-# Make sure ${JAVA_HOME}/bin is in the path
-CONFIGURE_ENV+=	PATH=${PATH}:${JAVA_HOME}/bin
-MAKE_ENV+=	PATH=${PATH}:${JAVA_HOME}/bin
-SCRIPT_ENV+=	PATH=${PATH}:${JAVA_HOME}/bin
+.if ${PORT_OPTIONS:MPARALLELMAKE}
+MAKE_JOBS_UNSAFE=no
 .else
-CONFIGURE_ARGS+=--without-javac
-.endif
-
-.if ${PORT_OPTIONS:MHIPE}
-CONFIGURE_ARGS+=--enable-hipe
-.else
-CONFIGURE_ARGS+=--disable-hipe
+MAKE_JOBS_UNSAFE=yes
 .endif
 
 # Native Libraries are still experimental
@@ -112,74 +92,6 @@ CONFIGURE_ARGS+=--disable-hipe
 CONFIGURE_ARGS+=--enable-native-libs
 .else
 CONFIGURE_ARGS+=--disable-native-libs
-.endif
-
-.if ${PORT_OPTIONS:MKQUEUE}
-CONFIGURE_ARGS+=--enable-kernel-poll
-.else
-CONFIGURE_ARGS+=--disable-kernel-poll
-.endif
-
-.if ${PORT_OPTIONS:MX11}
-USE_TK_RUN=	yes
-.if ${PORT_OPTIONS:MWX}
-USE_WX=		2.8+
-WX_COMPS=	wx contrib
-WX_UNICODE=	yes
-CONFIGURE_ARGS+=--with-wx-config=${WX_CONFIG}
-.endif
-.endif
-
-USE_GMAKE=	yes
-USE_CSTD=	gnu89
-USE_PERL5=	yes
-USE_RC_SUBR=	epmd.sh
-GNU_CONFIGURE=	yes
-ONLY_FOR_ARCHS=	i386 amd64 sparc64 powerpc
-REINPLACE_ARGS=	-i
-# From R15B01 parallel make is available
-MAKE_JOBS_SAFE= yes
-
-.if (${OSVERSION} < 700000)
-USE_GCC=	4.2+
-.endif
-
-.if ${PORT_OPTIONS:MODBC}
-CONFIGURE_ARGS+=--with-odbc
-.if ${PORT_OPTIONS:MUNIXODBC}
-LIB_DEPENDS+=	odbc.2:${PORTSDIR}/databases/unixODBC
-.elif ${PORT_OPTIONS:MIODBC}
-LIB_DEPENDS+=	iodbc.3:${PORTSDIR}/databases/libiodbc
-.endif
-.else
-CONFIGURE_ARGS+=--without-odbc
-.endif
-
-ERLANG_MAN=	otp_doc_man_R15B01.tar.gz
-.if !defined(NOPORTDOCS)
-ERLANG_DOCS=	otp_doc_html_R15B01.tar.gz
-.endif
-ERLANG_PLIST=	${WRKDIR}/pkg-plist
-
-.if ${PORT_OPTIONS:MTHREADS}
-CONFIGURE_ARGS+=--enable-threads
-.else
-CONFIGURE_ARGS+=--disable-threads
-.endif
-
-.if ${PORT_OPTIONS:MSCTP}
-CONFIGURE_ARGS+=--with-sctp
-.else
-CONFIGURE_ARGS+=--without-sctp
-.endif
-
-# enabling --enable-smp-support crashes the OS when
-# net_kernel:start([node_name, shortnames]) invoked repeatedly
-
-.if ${PORT_OPTIONS:MSMP}
-CONFIGURE_ARGS+=--enable-smp-support
-.else
-CONFIGURE_ARGS+=--disable-smp-support
 .endif
 
 # DTrace support: experimental
@@ -194,9 +106,89 @@ CFLAGS+=-fno-omit-frame-pointer
 CONFIGURE_ARGS+=--without-dynamic-trace
 .endif
 
-CFLAGS+=	-I${LOCALBASE}/include
-LDFLAGS+=	-L${LOCALBASE}/lib
-PLIST_SUB+=	TOOLS_VSN=${TOOLS_VSN}
+### end local mods 
+
+.if ${PORT_OPTIONS:MOPENSSL}
+USE_OPENSSL=	yes
+CONFIGURE_ARGS+=--with-ssl=${OPENSSLBASE}
+.else
+CONFIGURE_ARGS+=--without-ssl
+.endif
+
+.if ${PORT_OPTIONS:MJAVA}
+USE_JAVA=	yes
+CONFIGURE_ARGS+=--with-javac
+CONFIGURE_ENV+=	ac_cv_prog_JAVAC="${JAVAC}"
+.else
+CONFIGURE_ARGS+=--without-javac
+.endif
+
+.if ${PORT_OPTIONS:MHIPE}
+CONFIGURE_ARGS+=--enable-hipe
+.else
+CONFIGURE_ARGS+=--disable-hipe
+.endif
+
+.if ${PORT_OPTIONS:MKQUEUE}
+CONFIGURE_ARGS+=--enable-kernel-poll
+.else
+CONFIGURE_ARGS+=--disable-kernel-poll
+.endif
+
+.if ${PORT_OPTIONS:MGS}
+USE_TK_RUN=	yes
+.endif
+
+.if ${PORT_OPTIONS:MWX}
+USE_WX=		2.8+
+WX_COMPS=	wx contrib
+WX_UNICODE=	yes
+CONFIGURE_ARGS+=--with-wx-config=${WX_CONFIG}
+.endif
+
+USE_GMAKE=	yes
+USE_CSTD=	gnu89
+USE_PERL5=	yes
+USE_RC_SUBR=	epmd
+GNU_CONFIGURE=	yes
+ONLY_FOR_ARCHS=	i386 amd64 sparc64 powerpc
+
+.if ${PORT_OPTIONS:MODBC}
+CONFIGURE_ARGS+=--with-odbc
+.if ${PORT_OPTIONS:MUNIXODBC}
+LIB_DEPENDS+=	odbc:${PORTSDIR}/databases/unixODBC
+.elif ${PORT_OPTIONS:MIODBC}
+LIB_DEPENDS+=	iodbc:${PORTSDIR}/databases/libiodbc
+.endif
+.else
+CONFIGURE_ARGS+=--without-odbc
+.endif
+
+ERLANG_MAN=	otp_doc_man_${DISTVERSION}.tar.gz
+ERLANG_DOCS=	otp_doc_html_${DISTVERSION}.tar.gz
+ERLANG_PLIST=	${WRKDIR}/pkg-plist
+
+.if ${PORT_OPTIONS:MTHREADS}
+CONFIGURE_ARGS+=--enable-threads
+.else
+CONFIGURE_ARGS+=--disable-threads
+.endif
+
+.if ${PORT_OPTIONS:MSCTP}
+CONFIGURE_ARGS+=--enable-sctp
+.else
+CONFIGURE_ARGS+=--disable-sctp
+.endif
+
+# enabling --enable-smp-support crashes the OS when
+# net_kernel:start([node_name, shortnames]) invoked repeatedly
+# TODO verify if it still applies
+
+.if ${PORT_OPTIONS:MSMP}
+CONFIGURE_ARGS+=--enable-smp-support
+.else
+CONFIGURE_ARGS+=--disable-smp-support
+.endif
 
 .if ${ARCH} == i386
 MAKE_ARGS+=	ARCH=x86
@@ -214,31 +206,6 @@ MAN3PREFIX=	${PREFIX}/lib/erlang
 MAN4PREFIX=	${PREFIX}/lib/erlang
 MAN6PREFIX=	${PREFIX}/lib/erlang
 
-pre-configure:
-	@${REINPLACE_CMD} -e 's#%%CFLAGS%%#${CFLAGS}#g' ${WRKSRC}/lib/wx/configure
-
-# Check if ${JAVAC} exists.
-.if ${PORT_OPTIONS:MJAVA}
-	@if [ ! -x ${JAVAC} ]; then \
-		${ECHO_MSG} ">> Error: cannot find ${JAVAC}."; \
-		exit 1; \
-	fi
-.endif
-
-# If X11 is not used, skip the gs application.
-.if ${PORT_OPTIONS:MX11}
-	# do nothing
-.else
-	@${ECHO_CMD} "X11 disabled" > ${WRKSRC}/lib/gs/SKIP
-.endif
-
-# If ODBC is not used, skip the odbc application.
-.if ${PORT_OPTIONS:MODBC}
-	# do nothing
-.else
-	@${ECHO_CMD} "ODBC disabled" > ${WRKSRC}/lib/odbc/SKIP
-.endif
-
 # Install documentation. (HTML docs need to be in same dir as the
 # rest, not in share/doc/erlang as it should, because of relative
 # links in the documentation.
@@ -250,7 +217,7 @@ post-install:
 			"man/man$${SECTION}/*.$${SECTION}" || ${TRUE}; \
 	done
 	@${RM} -rf ${PREFIX}/lib/erlang/man/cat?
-.if !defined(NOPORTDOCS)
+.if ${PORT_OPTIONS:MDOCS}
 	@${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
 		-C ${PREFIX}/lib/erlang
 	@${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
@@ -327,4 +294,4 @@ buildplt:
 .include "Makefile.lib"
 .include "Makefile.man"
 
-.include <bsd.port.post.mk>
+.include <bsd.port.mk>

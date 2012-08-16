@@ -3,6 +3,6 @@ developed by Ericsson. It is being used by Ericsson as a systems
 programming language for large concurrent distributed systems. 
 
 Note: this port is not official: check out the original port
-lang/erlang for the stable operation.
+lang/erlang for the latest version. Older versions are also available.
 
 WWW: http://www.erlang.org/

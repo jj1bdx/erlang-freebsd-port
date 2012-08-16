@@ -1,6 +1,4 @@
-# Makefile.man build from R15B01 man doc files
-
-# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.27 2011/10/05 16:21:40 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.28 2012/08/15 20:01:14 olgeni Exp $
 
 MAN1=	ct_run.1 \
 	diameter_compile.1 \
@@ -605,7 +603,7 @@ MAN3=	CosEventChannelAdmin.3 \
 	zlib.3 \
 	zlib_stub.3
 
-MAN4=	app.4 \
+MAN4= 	app.4 \
 	appup.4 \
 	config.4 \
 	diameter_dict.4 \

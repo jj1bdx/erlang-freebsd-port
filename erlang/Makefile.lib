@@ -1,12 +1,9 @@
-# Makefile.lib build from vsn.mk for R15B01
+# $FreeBSD: ports/lang/erlang/Makefile.lib,v 1.42 2012/08/15 20:01:14 olgeni Exp $
 
-# $FreeBSD: ports/lang/erlang/Makefile.lib,v 1.40 2011/10/05 16:21:40 olgeni Exp $
-
-ERTS_VSN=	5.9.1
 TOOLS_VSN=	2.6.7
 OTP_LIBS=	appmon-2.1.14.1 \
 		asn1-1.7 \
-		common_test-1.6 \
+		common_test-1.6.1 \
 		compiler-4.8.1 \
 		cosEvent-2.1.12 \
 		cosEventDomain-1.1.12 \

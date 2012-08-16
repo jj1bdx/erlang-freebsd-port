@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $FreeBSD: ports/lang/erlang/files/epmd.sh.in,v 1.3 2010/03/27 00:13:09 dougb Exp $
+# $FreeBSD: ports/lang/erlang/files/epmd.in,v 1.1 2012/08/05 23:19:36 dougb Exp $
 #
 # PROVIDE: epmd
 # REQUIRE: LOGIN
@@ -15,7 +15,7 @@ epmd_enable=${epmd_enable:-"NO"}
 . /etc/rc.subr
 
 name=epmd
-rcvar=`set_rcvar`
+rcvar=epmd_enable
 
 procname=%%PREFIX%%/bin/epmd
 start_cmd="%%PREFIX%%/bin/epmd -daemon"

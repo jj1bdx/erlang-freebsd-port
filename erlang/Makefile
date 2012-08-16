@@ -13,17 +13,17 @@ PORTVERSION=	15.b.01
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
-	http://erlang.stacken.kth.se/download/:erlangorg	\
-	http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
-	http://www.erlang.se/doc/:erlangse			\
-	http://www.erlang.se/publications/:publications		\
-	http://www.sics.se/~joe/thesis/:joe			\
-	${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
+		http://erlang.stacken.kth.se/download/:erlangorg	\
+		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
+		http://www.erlang.se/doc/:erlangse			\
+		http://www.erlang.se/publications/:publications		\
+		http://www.sics.se/~joe/thesis/:joe			\
+		${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
 DISTNAME=	otp_src_${DISTVERSION}
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX}:erlangorg	\
-	${ERLANG_MAN}:erlangorg			\
-	${ERLANG_DOCS}:erlangorg		\
-	${DOC_DISTFILES}
+		${ERLANG_MAN}:erlangorg			\
+		${ERLANG_DOCS}:erlangorg		\
+		${DOC_DISTFILES}
 DIST_SUBDIR=	erlang
 EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
 
@@ -35,11 +35,11 @@ MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
 
 DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
-	bjarnelic.pdf:publications		\
-	erlang-book-part1.pdf:erlangorg		\
-	master_thesis_patterns.pdf:local	\
-	mnesia_overview.pdf:publications	\
-	programming_rules.pdf:erlangse
+		bjarnelic.pdf:publications		\
+		erlang-book-part1.pdf:erlangorg		\
+		master_thesis_patterns.pdf:local	\
+		mnesia_overview.pdf:publications	\
+		programming_rules.pdf:erlangse
 
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}

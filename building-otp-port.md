@@ -1,4 +1,4 @@
-Updating an Erlang/OTP Port (files under the Ports tree) 
+Updating an Erlang/OTP Port (files under the Ports tree)
 for FreeBSD is not a complicated task,
 with the latest pieces of the Port files.
 You can find out the latest pieces at
@@ -23,60 +23,60 @@ to specify the related source file names
 
         -PORTVERSION=   r14b04
         +PORTVERSION=   r14b
-        
+
         -DISTNAME=      otp_src_R14B04
         +DISTNAME=      otp_src_R15B
-        
+
         -ERLANG_MAN=    otp_doc_man_R14B04.tar.gz
         +ERLANG_MAN=    otp_doc_man_R15B.tar.gz
-        
+
         -ERLANG_DOCS=   otp_doc_html_R14B04.tar.gz
         +ERLANG_DOCS=   otp_doc_html_R15B.tar.gz
-        
-## <a name="lib"/>Preparing the library list 
+
+## <a name="lib"/>Preparing the library list
 
 `Makefile.lib` must be supplied to provide
 all the version numbers of the OTP library modules.
 
 To extract the version number, use the following shell command:
 
-        (cd work/otp_src_VERSION; \
-         find . -name vsn.mk -print | xargs grep VSN) \
-         > OTP-vsnlist.txt
+        (ls work/otp_src_*/lib/*/vsn.mk | while read _file; do
+           echo -e "\\t\\t$(basename $(dirname ${_file}))-$(grep "VSN" ${_file} | grep -v "APP_VSN" | awk -F= '{ print $2 }' | sed -e "s/ *//") \\"
+        done;
+
+        echo work/otp_src_*/erts/vsn.mk | while read _file; do
+           echo -e "\\t\\t$(basename $(dirname ${_file}))-$(grep "^VSN" ${_file} | awk -F= '{ print $2 }' | sed -e "s/ *//") \\"
+        done) | sort > OTP-vsnlist.txt
 
 The content of `OTP-vsnlist.txt` will be something like this:
 
-        ./erts/vsn.mk:VSN = 5.9
-        ./erts/vsn.mk:SYSTEM_VSN = R15B
-        ./lib/appmon/vsn.mk:APPMON_VSN = 2.1.14
-        ./lib/asn1/vsn.mk:ASN1_VSN = 1.6.19
-        ./lib/common_test/vsn.mk:COMMON_TEST_VSN = 1.6
-        ./lib/compiler/vsn.mk:COMPILER_VSN = 4.8
-        ./lib/cosEvent/vsn.mk:COSEVENT_VSN = 2.1.12
-        ./lib/cosEventDomain/vsn.mk:COSEVENTDOMAIN_VSN = 1.1.12
-        ./lib/cosFileTransfer/vsn.mk:COSFILETRANSFER_VSN = 1.1.13
-        ./lib/cosNotification/vsn.mk:COSNOTIFICATION_VSN = 1.1.18
+        appmon-2.1.14.1 \
+        asn1-1.7 \
+        common_test-1.6.1 \
+        compiler-4.8.1 \
+        cosEvent-2.1.12 \
+        cosEventDomain-1.1.12 \
+        cosFileTransfer-1.1.13 \
         [...]
-	./lib/wx/vsn.mk:WX_VSN = 0.99.1
-	./lib/xmerl/vsn.mk:XMERL_VSN = 1.3
+        wx-0.99.2 \
+        xmerl-1.3.1 \
 
 You have to manually edit the `Makefile.lib`
 with the content of `OTP-vsnlist.txt`.
 The format of `Makefile.lib` is
 (beware that the last line has no backslash):
 
-        ERTS_VSN=       5.9
-        TOOLS_VSN=      2.6.6.6
-        OTP_LIBS=       appmon-2.1.14 \
-                        asn1-1.6.19 \
-                        common_test-1.6 \
-                        compiler-4.8 \
+        ERTS_VSN=       5.9.1
+        TOOLS_VSN=      2.6.7
+        OTP_LIBS=       appmon-2.1.14.1 \
+                        asn1-1.7 \
+                        common_test-1.6.1 \
+                        compiler-4.8.1 \
                         cosEvent-2.1.12 \
                         cosEventDomain-1.1.12 \
                         cosFileTransfer-1.1.13 \
-                        cosNotification-1.1.18 \
                         [...]
-                        wx-0.99.1 \
+                        wx-0.99.2 \
                         xmerl-1.3
 
 The contents of `Makefile.lib` is a set of `Makefile` variables,
@@ -137,19 +137,19 @@ The format of `Makefile.man` is:
                 [...]
                 start_webtool.1 \
                 werl.1
-        
+
         MAN3=   CosEventChannelAdmin.3 \
                 CosEventChannelAdmin_ConsumerAdmin.3 \
                 [...]
                 zlib.3 \
                 zlib_stub.3
-        
+
         MAN4=   app.4 \
                 appup.4 \
                 [...]
                 relup.4 \
                 script.4
-        
+
         MAN6=   common_test.6 \
                 crypto.6 \
                 [...]
@@ -203,4 +203,3 @@ The building process will be like this
 
 * [Erlang/OTP repository at GitHub](https://github.com/erlang/otp/)
 * [FreeBSD Porter's Handbook](http://www.freebsd.org/doc/en/books/porters-handbook/)
-

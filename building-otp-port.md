@@ -1,4 +1,4 @@
-Updating an Erlang/OTP Port (files under the Ports tree) 
+Updating an Erlang/OTP Port (files under the Ports tree)
 for FreeBSD is not a complicated task,
 with the latest pieces of the Port files.
 You can find out the latest pieces at
@@ -23,17 +23,17 @@ to specify the related source file names
 
         -PORTVERSION=   r14b04
         +PORTVERSION=   r14b
-        
+
         -DISTNAME=      otp_src_R14B04
         +DISTNAME=      otp_src_R15B
-        
+
         -ERLANG_MAN=    otp_doc_man_R14B04.tar.gz
         +ERLANG_MAN=    otp_doc_man_R15B.tar.gz
-        
+
         -ERLANG_DOCS=   otp_doc_html_R14B04.tar.gz
         +ERLANG_DOCS=   otp_doc_html_R15B.tar.gz
-        
-## <a name="lib"/>Preparing the library list 
+
+## <a name="lib"/>Preparing the library list
 
 `Makefile.lib` must be supplied to provide
 all the version numbers of the OTP library modules.
@@ -137,19 +137,19 @@ The format of `Makefile.man` is:
                 [...]
                 start_webtool.1 \
                 werl.1
-        
+
         MAN3=   CosEventChannelAdmin.3 \
                 CosEventChannelAdmin_ConsumerAdmin.3 \
                 [...]
                 zlib.3 \
                 zlib_stub.3
-        
+
         MAN4=   app.4 \
                 appup.4 \
                 [...]
                 relup.4 \
                 script.4
-        
+
         MAN6=   common_test.6 \
                 crypto.6 \
                 [...]
@@ -203,4 +203,3 @@ The building process will be like this
 
 * [Erlang/OTP repository at GitHub](https://github.com/erlang/otp/)
 * [FreeBSD Porter's Handbook](http://www.freebsd.org/doc/en/books/porters-handbook/)
-

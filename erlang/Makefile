@@ -4,11 +4,10 @@
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.177 2012/08/15 20:17:48 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.179 2012/08/18 10:18:27 olgeni Exp $
 #
 
 PORTNAME=	erlang
-DISTVERSION=	R15B01
 PORTVERSION=	15.b.01
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
@@ -19,7 +18,7 @@ MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://www.erlang.se/publications/:publications		\
 		http://www.sics.se/~joe/thesis/:joe			\
 		${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
-DISTNAME=	otp_src_${DISTVERSION}
+DISTNAME=	otp_src_${ERL_RELEASE}
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX}:erlangorg	\
 		${ERLANG_MAN}:erlangorg			\
 		${ERLANG_DOCS}:erlangorg		\
@@ -27,12 +26,12 @@ DISTFILES=	${DISTNAME}${EXTRACT_SUFX}:erlangorg	\
 DIST_SUBDIR=	erlang
 EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
 
-CONFLICTS=	erlang-14*
-
 PATCH_SITES=	http://www.erlang.org/download
 
 MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
+
+CONFLICTS=	erlang-14*
 
 DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
 		bjarnelic.pdf:publications		\
@@ -74,7 +73,17 @@ IODBC_DESC=	Build with libiodbc support
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
+ERL_RELEASE=	R${PORTVERSION:S/.//g:U}
+
 .include <bsd.port.options.mk>
+
+# See http://wiki.freebsd.org/DTrace to learn how to enable DTrace
+# on your system. You will need to configure STRIP, WITH_CTF and
+# CFLAGS in your make.conf before building.
+
+# If you run Erlang and get a message resembling "WARNING: number of
+# probes fixed does not match the number of defined probes (54 != 132,
+# respectively)" you probably misconfigured DTrace in some way.
 
 ## local mods
 
@@ -94,6 +103,8 @@ CONFIGURE_ARGS+=--enable-native-libs
 CONFIGURE_ARGS+=--disable-native-libs
 .endif
 
+### end local mods 
+
 # DTrace support: experimental
 # Compilation with this option requires the root privilege
 .if ${PORT_OPTIONS:MDTRACE}
@@ -105,8 +116,6 @@ CFLAGS+=-fno-omit-frame-pointer
 .else
 CONFIGURE_ARGS+=--without-dynamic-trace
 .endif
-
-### end local mods 
 
 .if ${PORT_OPTIONS:MOPENSSL}
 USE_OPENSSL=	yes
@@ -164,8 +173,8 @@ LIB_DEPENDS+=	iodbc:${PORTSDIR}/databases/libiodbc
 CONFIGURE_ARGS+=--without-odbc
 .endif
 
-ERLANG_MAN=	otp_doc_man_${DISTVERSION}.tar.gz
-ERLANG_DOCS=	otp_doc_html_${DISTVERSION}.tar.gz
+ERLANG_MAN=	otp_doc_man_${ERL_RELEASE}.tar.gz
+ERLANG_DOCS=	otp_doc_html_${ERL_RELEASE}.tar.gz
 ERLANG_PLIST=	${WRKDIR}/pkg-plist
 
 .if ${PORT_OPTIONS:MTHREADS}

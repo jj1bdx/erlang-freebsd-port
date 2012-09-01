@@ -16,6 +16,8 @@ Merged OptionsNG patch at <http://www.freebsd.org/cgi/query-pr.cgi?pr=169355>.
 
 In this Port parallel make is *disabled* as default. Use the `make config` option `PARALLELMAKE`.
 
+For reducing memory consumption on building, try `env ERL_PORTS_MAX=4096 make`.
+
 `USE_OPENSSL` for enabling `bsd.openssl.mk` does not seem to work, 
 so it is not explicitly set in the `Makefile`. 
 The library search path decides what to link,

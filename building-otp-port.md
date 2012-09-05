@@ -21,17 +21,10 @@ The following parts of the main `Makefile` must be modified
 to specify the related source file names
 (in a unified diff-like format):
 
-        -PORTVERSION=   r14b04
-        +PORTVERSION=   r14b
-
-        -DISTNAME=      otp_src_R14B04
-        +DISTNAME=      otp_src_R15B
-
-        -ERLANG_MAN=    otp_doc_man_R14B04.tar.gz
-        +ERLANG_MAN=    otp_doc_man_R15B.tar.gz
-
-        -ERLANG_DOCS=   otp_doc_html_R14B04.tar.gz
-        +ERLANG_DOCS=   otp_doc_html_R15B.tar.gz
+	-PORTVERSION=	15.b.01
+	+PORTVERSION=   15.b.02
+	-PORTEPOCH=	2
+	+PORTEPOCH=     1
 
 ## <a name="lib"/>Preparing the library list
 
@@ -66,7 +59,6 @@ with the content of `OTP-vsnlist.txt`.
 The format of `Makefile.lib` is
 (beware that the last line has no backslash):
 
-        ERTS_VSN=       5.9.1
         TOOLS_VSN=      2.6.7
         OTP_LIBS=       appmon-2.1.14.1 \
                         asn1-1.7 \
@@ -81,8 +73,6 @@ The format of `Makefile.lib` is
 
 The contents of `Makefile.lib` is a set of `Makefile` variables,
 so all the module names must be listed with the backslash character.
-(Note: `ERTS_VSN` is no longer needed, but I will include it
-here just FYI.)
 
 ## <a name="man"/>Preparing the man file list
 

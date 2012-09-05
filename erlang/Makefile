@@ -8,8 +8,8 @@
 #
 
 PORTNAME=	erlang
-PORTVERSION=	15.b.01
-PORTEPOCH=	2
+PORTVERSION=	15.b.02
+PORTEPOCH=	1
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\

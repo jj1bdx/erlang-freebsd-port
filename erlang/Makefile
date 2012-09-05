@@ -89,7 +89,9 @@ ERL_RELEASE=	R${PORTVERSION:S/.//g:U}
 
 # Using gcc46 is a workaround to avoid the stock cc (4.2.1) hanging
 # on amd64 when compiling erts/emulator/beam/erl_nif.c
+.if ${ARCH} == "amd64"
 USE_GCC=        4.6+
+.endif
 
 .if ${PORT_OPTIONS:MPARALLELMAKE}
 MAKE_JOBS_UNSAFE=no

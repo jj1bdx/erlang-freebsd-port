@@ -23,8 +23,8 @@ to specify the related source file names
 
 	-PORTVERSION=	15.b.01
 	+PORTVERSION=   15.b.02
-	-PORTEPOCH=	2
-	+PORTEPOCH=     1
+
+Note: *do not decrease the value of `PORTEPOCH`*.
 
 ## <a name="lib"/>Preparing the library list
 

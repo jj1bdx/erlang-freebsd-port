@@ -1,4 +1,4 @@
-# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.28 2012/08/15 20:01:14 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.29 2012/09/10 19:09:48 olgeni Exp $
 
 MAN1=	ct_run.1 \
 	diameter_compile.1 \

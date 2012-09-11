@@ -10,7 +10,9 @@ Current version is for R15B02, tested on 9.1-PRERELEASE/amd64 and 8.3-RELEASE/i3
 
 ## Notes
 
-For amd64: `USE_GCC=4.6+` added as a conditional directive when `${ARCH}=="amd64"`. When building `erts/emulator/beam/erl_nif.c` with the stock cc (4.2.1) on 9.1-PRERELEASE/amd64, the compiler takes too much CPU time and does not proceed. This problem will be solved by using gcc 4.6 in the Ports library `lang/gcc46`. Related info: <http://www.freebsd.org/cgi/query-pr.cgi?pr=147451>.
+The `make config` flag `GCC46` must be enabled when building the DTrace-enabled version on amd64. Symptom: when building `erts/emulator/beam/erl_nif.c` with the stock cc (4.2.1) on 9.1-PRERELEASE/amd64, the compiler takes too much CPU time and does not proceed. This problem will be solved by using gcc 4.6 in the Ports library `lang/gcc46`. Related info: <http://www.freebsd.org/cgi/query-pr.cgi?pr=147451>. (Thanks Jimmy Olgeni for helping chasing this bug)
+
+Merged the main line files for R15B02.
 
 Merged the main line files for R15B01 as described in <http://www.freebsd.org/cgi/query-pr.cgi?pr=163711>.
 

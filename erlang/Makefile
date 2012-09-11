@@ -4,7 +4,8 @@
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.179 2012/08/18 10:18:27 olgeni Exp $
+# Based on:
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.180 2012/09/10 19:09:48 olgeni Exp $
 #
 
 PORTNAME=	erlang
@@ -44,12 +45,13 @@ SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
 
 ## local mods
-OPTIONS_DEFINE=	DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX \
+OPTIONS_DEFINE=	GCC46 DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX \
 		DTRACE NATIVELIBS PARALLELMAKE
 ## local mods end
 OPTIONS_SINGLE=	ODBC
 OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
 
+GCC46_DESC=	Use gcc 4.6
 HIPE_DESC=	Build native HiPE compiler
 KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
 SCTP_DESC=	Enable SCTP support
@@ -87,12 +89,6 @@ ERL_RELEASE=	R${PORTVERSION:S/.//g:U}
 
 ## local mods
 
-# Using gcc46 is a workaround to avoid the stock cc (4.2.1) hanging
-# on amd64 when compiling erts/emulator/beam/erl_nif.c
-.if ${ARCH} == "amd64"
-USE_GCC=        4.6+
-.endif
-
 .if ${PORT_OPTIONS:MPARALLELMAKE}
 MAKE_JOBS_UNSAFE=no
 .else
@@ -108,6 +104,16 @@ CONFIGURE_ARGS+=--disable-native-libs
 .endif
 
 ### end local mods 
+
+# local comment:
+# Using gcc46 is a workaround to avoid the stock cc (4.2.1) hanging
+# on amd64 when compiling erts/emulator/beam/erl_nif.c
+# (CPUTYPE?=nocona in /etc/make.conf might affect this)
+# end of local comment
+
+.if ${PORT_OPTIONS:MGCC46}
+USE_GCC?=     4.6+
+.endif
 
 # DTrace support: experimental
 # Compilation with this option requires the root privilege

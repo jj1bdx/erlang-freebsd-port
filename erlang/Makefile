@@ -12,7 +12,9 @@ PORTNAME=	erlang
 PORTVERSION=	15.b.02
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
-MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
+# added Basho Japan repository as a local mod
+MASTER_SITES=	http://download.basho.co.jp.try-cs.ycloud.jp/download/:erlangorg	\
+		http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
 		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
 		http://www.erlang.se/doc/:erlangse			\

@@ -4,17 +4,15 @@
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# Based on:
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.180 2012/09/10 19:09:48 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.182 2012/11/05 14:53:00 olgeni Exp $
 #
 
 PORTNAME=	erlang
 PORTVERSION=	15.b.02
+PORTREVISION=	1
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
-# added Basho Japan repository as a local mod
-MASTER_SITES=	http://download.basho.co.jp.try-cs.ycloud.jp/download/:erlangorg	\
-		http://www.erlang.org/download/:erlangorg		\
+MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
 		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
 		http://www.erlang.se/doc/:erlangse			\
@@ -46,10 +44,12 @@ DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
 
-## local mods
-OPTIONS_DEFINE=	GCC46 DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX \
-		DTRACE NATIVELIBS PARALLELMAKE
-## local mods end
+MAKE_JOBS_UNSAFE=yes
+
+# local mods
+OPTIONS_DEFINE=	GCC46 DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE
+		NATIVELIBS PARALLELMAKE
+# local mods end
 OPTIONS_SINGLE=	ODBC
 OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
 
@@ -60,19 +60,12 @@ SCTP_DESC=	Enable SCTP support
 SMP_DESC=	Enable SMP support
 WX_DESC=	Enable WX application
 GS_DESC=	Enable GS application (deprecated)
+DTRACE_DESC=	Enable DTrace support (experimental)
 
 ## local mods
 ## non-standard flags
-DTRACE_DESC=	Enable DTrace support (experimental)
 NATIVELIBS_DESC=	Enable Native Libraries
 PARALLELMAKE_DESC=	Enable parallel make (experimental)
-JAVA_DESC=	Enable Java applications
-OPENSSL_DESC=	Enable OpenSSL support
-THREADS_DESC=	Enable thread support
-X11_DESC=	Enable X11 support
-ODBC_DESC=	Enable ODBC support
-UNIXODBC_DESC=	Build with unixODBC support
-IODBC_DESC=	Build with libiodbc support
 ## local mods end
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
@@ -105,13 +98,15 @@ CONFIGURE_ARGS+=--enable-native-libs
 CONFIGURE_ARGS+=--disable-native-libs
 .endif
 
-### end local mods 
-
 # local comment:
 # Using gcc46 is a workaround to avoid the stock cc (4.2.1) hanging
 # on amd64 when compiling erts/emulator/beam/erl_nif.c
 # (CPUTYPE?=nocona in /etc/make.conf might affect this)
 # end of local comment
+
+.if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC46}
+IGNORE=		DTRACE support on amd64 requires GCC46 option
+.endif
 
 .if ${PORT_OPTIONS:MGCC46}
 USE_GCC?=     4.6+
@@ -135,6 +130,8 @@ CONFIGURE_ARGS+=--with-ssl=${OPENSSLBASE}
 .else
 CONFIGURE_ARGS+=--without-ssl
 .endif
+
+### local mods end
 
 .if ${PORT_OPTIONS:MJAVA}
 USE_JAVA=	yes

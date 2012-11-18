@@ -4,7 +4,7 @@
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.182 2012/11/05 14:53:00 olgeni Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.183 2012/11/17 05:58:49 svnexp Exp $
 #
 
 PORTNAME=	erlang

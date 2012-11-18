@@ -1,5 +1,5 @@
 
-$FreeBSD: ports/lang/erlang/files/patch-erts_etc_common_erlc.c,v 1.1 2010/04/07 22:04:49 olgeni Exp $
+$FreeBSD: ports/lang/erlang/files/patch-erts_etc_common_erlc.c,v 1.2 2012/11/17 05:58:49 svnexp Exp $
 
 --- erts/etc/common/erlc.c.orig
 +++ erts/etc/common/erlc.c

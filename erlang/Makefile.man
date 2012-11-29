@@ -1,4 +1,4 @@
-# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.30 2012/11/17 05:58:49 svnexp Exp $
+# $FreeBSD: ports/lang/erlang/Makefile.man,v 1.31 2012/11/28 19:38:35 svnexp Exp $
 
 MAN1=	ct_run.1 \
 	diameter_compile.1 \
@@ -127,6 +127,8 @@ MAN3=	CosEventChannelAdmin.3 \
 	dialyzer.3 \
 	diameter.3 \
 	diameter_app.3 \
+	diameter_codec.3 \
+	diameter_make.3 \
 	diameter_sctp.3 \
 	diameter_tcp.3 \
 	diameter_transport.3 \

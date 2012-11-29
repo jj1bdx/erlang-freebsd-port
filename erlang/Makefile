@@ -1,15 +1,14 @@
+# New ports collection makefile for:	erlang
 # This is a private port Makefile for Erlang
 
-# New ports collection makefile for:	erlang
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.183 2012/11/17 05:58:49 svnexp Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.185 2012/11/28 19:38:35 svnexp Exp $
 #
 
 PORTNAME=	erlang
-PORTVERSION=	15.b.02
-PORTREVISION=	1
+PORTVERSION=	15.b.03
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
@@ -109,7 +108,7 @@ IGNORE=		DTRACE support on amd64 requires GCC46 option
 .endif
 
 .if ${PORT_OPTIONS:MGCC46}
-USE_GCC?=     4.6+
+USE_GCC?=	4.6+
 .endif
 
 # DTrace support: experimental

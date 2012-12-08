@@ -39,3 +39,7 @@ At least you've got to do the following things:
 * Add necessary definitions in `make.conf`; Erlang BEAM works on the userland.
 * Compile the Port with the `root` privilege; otherwise `dtrace -h` won't work.
 * Invoke `dtrace` command with the `root` privilege when profiling; using `sudo` may help. (You don't have to run the target Erlang BEAM privileged BTW.)
+
+## Acknowledgment
+
+* Jimmy Olgeni, for maintaining the original Erlang Port of FreeBSD.

@@ -1,15 +1,12 @@
 # New ports collection makefile for:	erlang
-# This is a private port Makefile for Erlang
-
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.186 2012/11/29 21:45:44 svnexp Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.187 2012/12/07 21:52:15 svnexp Exp $
 #
 
 PORTNAME=	erlang
-PORTVERSION=	15.b.03
-PORTREVISION=	1
+PORTVERSION=	15.b.03.1
 PORTEPOCH=	2
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
@@ -41,6 +38,8 @@ DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
 		mnesia_overview.pdf:publications	\
 		programming_rules.pdf:erlangse
 
+WRKSRC=		${WRKDIR}/otp_src_R15B03
+
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
 
@@ -70,7 +69,7 @@ PARALLELMAKE_DESC=	Enable parallel make (experimental)
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
-ERL_RELEASE=	R${PORTVERSION:S/.//g:U}
+ERL_RELEASE=	R${PORTVERSION:S/.//g:U:S/1$/-1/}
 
 .include <bsd.port.options.mk>
 

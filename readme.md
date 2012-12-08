@@ -6,7 +6,8 @@ available in the FreeBSD Port tree.
 
 This Port is highly experimental, so use with care.
 
-Current version is for R15B03, tested on 9-STABLE/amd64 and 8-STABLE/i386.
+Current version is for R15B03-1, tested on 9-STABLE/amd64 and 8-STABLE/i386, 
+based on FreeBSD Ports svn r308452.
 
 ## Notes
 

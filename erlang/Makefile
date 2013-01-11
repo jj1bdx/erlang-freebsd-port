@@ -2,12 +2,12 @@
 # Date created:		11 Dec 1998
 # Whom:			ruslan@shevchenko.kiev.ua
 #
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.187 2012/12/07 21:52:15 svnexp Exp $
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.188 2013/01/10 15:27:09 svnexp Exp $
 #
 
 PORTNAME=	erlang
 PORTVERSION=	15.b.03.1
-PORTEPOCH=	2
+PORTEPOCH=	3
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\

@@ -6,14 +6,17 @@ available in the FreeBSD Port tree.
 
 This Port is highly experimental, so use with care.
 
-Current version is for R15B03-1, tested on 9-STABLE/amd64 and 8-STABLE/i386, 
-based on FreeBSD Ports svn r308452.
+Current version is for R15B03-1, tested on 9.1-STABLE/amd64 and 8.3-STABLE/i386.
+
+This port is based on FreeBSD Ports svn r310183.
 
 ## Notes
 
+Consider applying the patch in FreeBSD PR `bin/171678` to compile the dtrace version. The patch is included under the directory `PR-171678-dtrace-patch`. See `PR-171678-dtrace-patch/fix-dtrace-build.md` for the further details.
+
 The `make config` flag `GCC46` must be enabled when building the DTrace-enabled version on amd64. Symptom: when building `erts/emulator/beam/erl_nif.c` with the stock cc (4.2.1) on 9.1-PRERELEASE/amd64, the compiler takes too much CPU time and does not proceed. This problem will be solved by using gcc 4.6 in the Ports library `lang/gcc46`. Related info: <http://www.freebsd.org/cgi/query-pr.cgi?pr=147451>. (Thanks Jimmy Olgeni for helping chasing this bug)
 
-Merged the main line files for R15B03.
+Merged the main line files for R15B03-1
 
 In this Port parallel make is *disabled* as default. Use the `make config` option `PARALLELMAKE`.
 

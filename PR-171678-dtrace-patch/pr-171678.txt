@@ -1,0 +1,164 @@
+From nobody@FreeBSD.org  Sun Sep 16 05:56:16 2012
+Return-Path: <nobody@FreeBSD.org>
+Received: from mx1.freebsd.org (mx1.freebsd.org [69.147.83.52])
+	by hub.freebsd.org (Postfix) with ESMTP id 041B8106564A
+	for <freebsd-gnats-submit@FreeBSD.org>; Sun, 16 Sep 2012 05:56:16 +0000 (UTC)
+	(envelope-from nobody@FreeBSD.org)
+Received: from red.freebsd.org (red.freebsd.org [IPv6:2001:4f8:fff6::22])
+	by mx1.freebsd.org (Postfix) with ESMTP id E32098FC29
+	for <freebsd-gnats-submit@FreeBSD.org>; Sun, 16 Sep 2012 05:56:15 +0000 (UTC)
+Received: from red.freebsd.org (localhost [127.0.0.1])
+	by red.freebsd.org (8.14.5/8.14.5) with ESMTP id q8G5uFPd019079
+	for <freebsd-gnats-submit@FreeBSD.org>; Sun, 16 Sep 2012 05:56:15 GMT
+	(envelope-from nobody@red.freebsd.org)
+Received: (from nobody@localhost)
+	by red.freebsd.org (8.14.5/8.14.5/Submit) id q8G5uFwJ019076;
+	Sun, 16 Sep 2012 05:56:15 GMT
+	(envelope-from nobody)
+Message-Id: <201209160556.q8G5uFwJ019076@red.freebsd.org>
+Date: Sun, 16 Sep 2012 05:56:15 GMT
+From: Mark Johnston <markjdb@gmail.com>
+To: freebsd-gnats-submit@FreeBSD.org
+Subject: [dtrace] dtrace -h doesn't work when io.d is installed
+X-Send-Pr-Version: www-3.1
+X-GNATS-Notify:
+
+>Number:         171678
+>Category:       bin
+>Synopsis:       [dtrace] dtrace -h doesn't work when io.d is installed
+>Confidential:   no
+>Severity:       non-critical
+>Priority:       low
+>Responsible:    freebsd-bugs
+>State:          open
+>Quarter:        
+>Keywords:       
+>Date-Required:  
+>Class:          sw-bug
+>Submitter-Id:   current-users
+>Arrival-Date:   Sun Sep 16 06:00:27 UTC 2012
+>Closed-Date:    
+>Last-Modified:  Sat Dec 15 06:40:00 UTC 2012
+>Originator:     Mark Johnston
+>Release:        CURRENT
+>Organization:
+>Environment:
+FreeBSD oddish.laptop 10.0-CURRENT FreeBSD 10.0-CURRENT #13 r240519+3cc2dea-dirty: Sat Sep 15 22:29:45 EDT 2012     mark@oddish.laptop:/usr/obj/usr/home/mark/src/freebsd/sys/GENERIC  amd64
+>Description:
+When running dtrace -h, I get the following unintuitive error message:
+
+$ dtrace -h -s perldtrace.d
+dtrace: failed to compile script perldtrace.d: "/usr/lib/dtrace/regs_x86.d", line 2: type redeclared: struct devinfo
+
+This error doesn't occur if I run it without -h, which doesn't make much sense since the scripts in /usr/lib/dtrace/ are processed regardless.
+>How-To-Repeat:
+
+>Fix:
+The root of the problem is the "#pragma D depends_on provider" in /usr/lib/dtrace/io.d. When dtrace sees that directive, it calls a DTRACEIOC_PROVIDER ioctl on /dev/dtrace/dtrace with the appropriate provider argument ("io" in this case) to verify that that provider really is available.
+
+Turns out that the -h (and -G) option sets the DTRACE_O_NODEV flag, which basically means "don't open /dev/dtrace/dtrace or /dev/dtrace/fasttrap." This allows dtrace -h to be used without needing root privileges. But obviously we need to open /dev/dtrace/dtrace for the reason mentioned above, and dtrace aborts because it can't call the ioctl.
+
+For now, I'm working around this by just removing /usr/lib/dtrace/io.d - I don't need it at the moment. I'm not sure what the right fix is. Probably the error message could also be improved in this case, but I haven't really looked into that.
+
+>Release-Note:
+>Audit-Trail:
+
+From: Mark Johnston <markjdb@gmail.com>
+To: bug-followup@FreeBSD.org
+Cc:  
+Subject: Re: misc/171678: [dtrace] dtrace -h doesn&#39;t work when io.d is
+ installed
+Date: Sun, 16 Sep 2012 02:20:46 -0400
+
+ I should also point out that simply removing the depends_on directive in
+ io.d is a sufficient workaround. Just make sure dtio.ko is loaded I
+ guess. :)
+ 
+ -Mark
+
+From: Mark Johnston <markjdb@gmail.com>
+To: bug-followup@FreeBSD.org
+Cc:  
+Subject: Re: bin/171678: [dtrace] dtrace -h doesn&#39;t work when io.d is
+ installed
+Date: Sat, 15 Dec 2012 01:34:08 -0500
+
+ --jTMWTj4UTAEmbWeb
+ Content-Type: text/plain; charset=us-ascii
+ Content-Disposition: inline
+ 
+ I've attached a patch with an actual fix. Specific, this changes
+ libdtrace to first look for providers from the debug.dtrace.providers
+ sysctl. This doesn't require the user to be root, so dtrace -h works as
+ expected.
+ 
+ Here's an easy test case (for CURRENT) to reproduce the original problem:
+ 
+ $ cat probe.d
+ provider test {
+         probe testprobe();
+ };
+ $ dtrace -h -s probe.d
+ dtrace: failed to compile script probe.d: "/usr/lib/dtrace/regs_x86.d", line 2: type redeclared: struct devinfo
+ $
+ 
+ As I mentioned, this is caused by the depends_on pragma in io.d. The
+ same problem comes up if a "depends_on provider" pragma is added to
+ probe.d.
+ 
+ Thanks,
+ -Mark
+ 
+ --jTMWTj4UTAEmbWeb
+ Content-Type: text/x-diff; charset=us-ascii
+ Content-Disposition: attachment; filename="dtrace_depends_on_sysctl.patch"
+ 
+ diff --git a/cddl/contrib/opensolaris/lib/libdtrace/common/dt_pragma.c b/cddl/contrib/opensolaris/lib/libdtrace/common/dt_pragma.c
+ index 00578f4..8d64d8d 100644
+ --- a/cddl/contrib/opensolaris/lib/libdtrace/common/dt_pragma.c
+ +++ b/cddl/contrib/opensolaris/lib/libdtrace/common/dt_pragma.c
+ @@ -241,6 +241,8 @@ dt_pragma_depends(const char *prname, dt_node_t *cnp)
+  	int found;
+  	dt_lib_depend_t *dld;
+  	char lib[MAXPATHLEN];
+ +	size_t plen;
+ +	char *provs, *cpy, *tok;
+  
+  	if (cnp == NULL || nnp == NULL ||
+  	    cnp->dn_kind != DT_NODE_IDENT || nnp->dn_kind != DT_NODE_IDENT) {
+ @@ -248,9 +250,28 @@ dt_pragma_depends(const char *prname, dt_node_t *cnp)
+  		    "<class> <name>\n", prname);
+  	}
+  
+ -	if (strcmp(cnp->dn_string, "provider") == 0)
+ -		found = dt_provider_lookup(dtp, nnp->dn_string) != NULL;
+ -	else if (strcmp(cnp->dn_string, "module") == 0) {
+ +	if (strcmp(cnp->dn_string, "provider") == 0) {
+ +		/*
+ +		 * First try to get the provider list using the
+ +		 * debug.dtrace.providers sysctl, since that'll work even if
+ +		 * we're not running as root.
+ +		 */
+ +		provs = NULL;
+ +		if (sysctlbyname("debug.dtrace.providers", NULL, &plen, NULL, 0) ||
+ +		    ((provs = dt_alloc(dtp, plen)) == NULL) ||
+ +		    sysctlbyname("debug.dtrace.providers", provs, &plen, NULL, 0))
+ +			found = dt_provider_lookup(dtp, nnp->dn_string) != NULL;
+ +		else {
+ +			found = B_FALSE;
+ +			for (cpy = provs; (tok = strsep(&cpy, " ")) != NULL; )
+ +				if (strcmp(tok, nnp->dn_string) == 0) {
+ +					found = B_TRUE;
+ +					break;
+ +				}
+ +		}
+ +		if (provs != NULL)
+ +			dt_free(dtp, provs);
+ +	} else if (strcmp(cnp->dn_string, "module") == 0) {
+  		dt_module_t *mp = dt_module_lookup_by_name(dtp, nnp->dn_string);
+  		found = mp != NULL && dt_module_getctf(dtp, mp) != NULL;
+  	} else if (strcmp(cnp->dn_string, "library") == 0) {
+ 
+ --jTMWTj4UTAEmbWeb--
+>Unformatted:
+

@@ -1,9 +1,5 @@
-# New ports collection makefile for:	erlang
-# Date created:		11 Dec 1998
-# Whom:			ruslan@shevchenko.kiev.ua
-#
-# $FreeBSD: ports/lang/erlang/Makefile,v 1.188 2013/01/10 15:27:09 svnexp Exp $
-#
+# Created by: ruslan@shevchenko.kiev.ua
+# $FreeBSD: ports/lang/erlang/Makefile,v 1.192 2013/02/24 11:42:27 svnexp Exp $
 
 PORTNAME=	erlang
 PORTVERSION=	15.b.03.1
@@ -28,8 +24,6 @@ PATCH_SITES=	http://www.erlang.org/download
 
 MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
-
-CONFLICTS=	erlang-14*
 
 DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
 		bjarnelic.pdf:publications		\
@@ -168,7 +162,6 @@ USE_CSTD=	gnu89
 USE_PERL5=	yes
 USE_RC_SUBR=	epmd
 GNU_CONFIGURE=	yes
-ONLY_FOR_ARCHS=	i386 amd64 sparc64 powerpc
 
 .if ${PORT_OPTIONS:MODBC}
 CONFIGURE_ARGS+=--with-odbc
@@ -240,9 +233,9 @@ post-install:
 	@${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
 		${PREFIX}/lib/erlang/lib/dialyzer-*/doc/
 
-	@${MKDIR} ${PREFIX}/share/doc/erlang
+	@${MKDIR} ${DOCSDIR}
 .for FILE in ${DOC_DISTFILES}
-	@${INSTALL_DATA} ${DISTDIR}/${DIST_SUBDIR}/$$(expr ${FILE} : '\([^:]*\)') ${PREFIX}/share/doc/erlang
+	@${INSTALL_DATA} ${DISTDIR}/${DIST_SUBDIR}/$$(expr ${FILE} : '\([^:]*\)') ${DOCSDIR}
 .endfor
 .endif
 	@${CHOWN} -R ${SHAREOWN}:${SHAREGRP} ${PREFIX}/lib/erlang

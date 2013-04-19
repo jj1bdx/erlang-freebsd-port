@@ -38,6 +38,9 @@ On amd64, however, it does not work on the libraries yet.
 ## DTrace support
 
 <http://wiki.freebsd.org/DTrace> is a must read for testing DTrace.
+
+From r249549, 9-STABLE GENERIC kernel includes DTrace support. See <http://lists.freebsd.org/pipermail/svn-src-all/2013-April/067616.html> for the details.
+
 At least you've got to do the following things:
 
 * Rebuild the kernel with all the necessary options.

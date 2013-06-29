@@ -14,7 +14,7 @@ This port is based on FreeBSD Ports svn r316462.
 
 If you build with Java support (such as jinterface), install the port `java/openjdk6` before the installation of this port. Installing the OpenJDK as an dependency of this port will not work.
 
-Consider applying the patch in FreeBSD PR `bin/171678` to compile the dtrace version. The patch is included under the directory `PR-171678-dtrace-patch`. See `PR-171678-dtrace-patch/fix-dtrace-build.md` for the further details.
+For (9-STABLE) r251856 and earlier, consider applying the patch in FreeBSD PR `bin/171678` to compile the dtrace version. The patch is included under the directory `PR-171678-dtrace-patch`. See `PR-171678-dtrace-patch/fix-dtrace-build.md` for the further details. Note: this patch is no longer needed for the FreeBSD 9-STABLE r251857 and later; the PR 171678 code has been merged.
 
 The `make config` flag `GCC46` must be enabled when building the DTrace-enabled version on amd64. Symptom: when building `erts/emulator/beam/erl_nif.c` with the stock cc (4.2.1) on 9.1-PRERELEASE/amd64, the compiler takes too much CPU time and does not proceed. This problem will be solved by using gcc 4.6 in the Ports library `lang/gcc46`. Related info: <http://www.freebsd.org/cgi/query-pr.cgi?pr=147451>. (Thanks Jimmy Olgeni for helping chasing this bug)
 

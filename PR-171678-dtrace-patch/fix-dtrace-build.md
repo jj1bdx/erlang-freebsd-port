@@ -1,5 +1,9 @@
 # Fix dtrace build issue
 
+## Notice
+
+This patch is no longer needed for the FreeBSD 9-STABLE r251857 and later; the PR 171678 code has been merged.
+
 ## Symptom
 
 On FreeBSD 9.1-STABLE r245019, 

@@ -6,19 +6,13 @@ bin/erl_call
 bin/erlc
 bin/escript
 bin/run_erl
-bin/run_test
 bin/to_erl
 bin/typer
+etc/man.d/erlang.conf
 @comment Insert PLIST here
 @comment -=[ begin PLIST.lib-erlang ]=-
 @comment -=[ end PLIST.lib-erlang ]=-
-@dirrm lib/erlang/man/man6
-@dirrm lib/erlang/man/man4
-@dirrm lib/erlang/man/man3
-@dirrm lib/erlang/man/man1
-@dirrm lib/erlang/man
-@dirrmtry lib/erlang/lib
-@dirrmtry lib/erlang
+@dirrmtry lib/%%ERLANG_LIB%%
 %%PORTDOCS%%%%DOCSDIR%%/armstrong_thesis_2003.pdf
 %%PORTDOCS%%%%DOCSDIR%%/bjarnelic.pdf
 %%PORTDOCS%%%%DOCSDIR%%/erlang-book-part1.pdf

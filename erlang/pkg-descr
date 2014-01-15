@@ -5,6 +5,3 @@ instant messaging. Erlang's runtime system has built-in support for
 concurrency, distribution and fault tolerance.
 
 WWW: http://www.erlang.org/
-
-Note: this port is not official: check out the original port
-lang/erlang for the latest version. Older versions are also available.

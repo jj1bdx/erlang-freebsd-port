@@ -1,9 +1,8 @@
 # Created by: ruslan@shevchenko.kiev.ua
-# $FreeBSD: lang/erlang/Makefile 316462 2013-04-24 18:03:50Z olgeni $
+# $FreeBSD: lang/erlang/Makefile 339103 2014-01-08 11:45:58Z olgeni $
 
 PORTNAME=	erlang
-PORTVERSION=	15.b.03.1
-PORTREVISION=	1
+PORTVERSION=	16.b.03
 PORTEPOCH=	3
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
@@ -24,21 +23,21 @@ PATCH_SITES=	http://www.erlang.org/download
 MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
 
-WRKSRC=		${WRKDIR}/otp_src_R15B03
+WRKSRC=		${WRKDIR}/otp_src_R16B03
+
+ERLANG_LIB=	${PORTNAME}
 
 SUB_FILES=	pkg-message
 SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
+PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 
 MAKE_JOBS_UNSAFE=yes
 
-# local mods
-OPTIONS_DEFINE=	GCC46 DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE \
-		NATIVELIBS PARALLELMAKE
-# local mods end
+OPTIONS_DEFINE=	GCC DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE
 OPTIONS_SINGLE=	ODBC
 OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
 
-GCC46_DESC=	Use gcc 4.6
+GCC_DESC=	Use current GCC
 HIPE_DESC=	Build native HiPE compiler
 KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
 SCTP_DESC=	Enable SCTP support
@@ -47,15 +46,17 @@ WX_DESC=	Enable WX application
 GS_DESC=	Enable GS application (deprecated)
 DTRACE_DESC=	Enable DTrace support (experimental)
 
-## local mods
-## non-standard flags
-NATIVELIBS_DESC=	Enable Native Libraries
-PARALLELMAKE_DESC=	Enable parallel make (experimental)
-## local mods end
-
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
 ERL_RELEASE=	R${PORTVERSION:S/.//g:U:S/1$/-1/}
+
+USES=		gmake perl5
+USE_RC_SUBR=	epmd
+GNU_CONFIGURE=	yes
+LDFLAGS+=	-L${LOCALBASE}/lib
+
+EI_VSN=		3.7.15
+TOOLS_VSN=	2.6.13
 
 .include <bsd.port.options.mk>
 
@@ -78,44 +79,16 @@ DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
 # probes fixed does not match the number of defined probes (54 != 132,
 # respectively)" you probably misconfigured DTrace in some way.
 
-## local mods
-
-.if ${PORT_OPTIONS:MPARALLELMAKE}
-MAKE_JOBS_UNSAFE=no
-.else
-MAKE_JOBS_UNSAFE=yes
+.if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC}
+IGNORE=		DTRACE support on amd64 requires GCC option
 .endif
 
-# Native Libraries are still experimental
-# at least on FreeBSD/amd64
-.if ${PORT_OPTIONS:MNATIVELIBS}
-CONFIGURE_ARGS+=--enable-native-libs
-.else
-CONFIGURE_ARGS+=--disable-native-libs
+.if ${PORT_OPTIONS:MGCC}
+USE_GCC?=	yes
 .endif
 
-# local comment:
-# Using gcc46 is a workaround to avoid the stock cc (4.2.1) hanging
-# on amd64 when compiling erts/emulator/beam/erl_nif.c
-# (CPUTYPE?=nocona in /etc/make.conf might affect this)
-# end of local comment
-
-.if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC46}
-IGNORE=		DTRACE support on amd64 requires GCC46 option
-.endif
-
-.if ${PORT_OPTIONS:MGCC46}
-USE_GCC?=	4.6+
-.endif
-
-# DTrace support: experimental
-# Compilation with this option requires the root privilege
 .if ${PORT_OPTIONS:MDTRACE}
 CONFIGURE_ARGS+=--with-dynamic-trace=dtrace
-# the following three lines should be configured in make.conf
-WITH_CTF=1
-STRIP=
-CFLAGS+=-fno-omit-frame-pointer
 .else
 CONFIGURE_ARGS+=--without-dynamic-trace
 .endif
@@ -126,8 +99,6 @@ CONFIGURE_ARGS+=--with-ssl=${OPENSSLBASE}
 .else
 CONFIGURE_ARGS+=--without-ssl
 .endif
-
-### local mods end
 
 .if ${PORT_OPTIONS:MJAVA}
 USE_JAVA=	yes
@@ -159,12 +130,6 @@ WX_COMPS=	wx contrib
 WX_UNICODE=	yes
 CONFIGURE_ARGS+=--with-wx-config=${WX_CONFIG}
 .endif
-
-USE_GMAKE=	yes
-USE_CSTD=	gnu89
-USE_PERL5=	yes
-USE_RC_SUBR=	epmd
-GNU_CONFIGURE=	yes
 
 .if ${PORT_OPTIONS:MODBC}
 CONFIGURE_ARGS+=--with-odbc
@@ -212,78 +177,46 @@ MAKE_ARGS+=	ARCH=x86
 # Erlang man pages are more of internal documentation using the man format than
 # actual system man pages. (erl.1 and epmd.1 perhaps being the exception).
 
-NO_MANCOMPRESS=	yes
-
-MAN1PREFIX=	${PREFIX}/lib/erlang
-MAN3PREFIX=	${PREFIX}/lib/erlang
-MAN4PREFIX=	${PREFIX}/lib/erlang
-MAN6PREFIX=	${PREFIX}/lib/erlang
-
 # Install documentation. (HTML docs need to be in same dir as the
 # rest, not in share/doc/erlang as it should, because of relative
 # links in the documentation.
+
+post-patch:
+	@${ECHO_CMD} "MANPATH ${PREFIX}/lib/erlang/man" > ${WRKDIR}/erlang.conf
+
+
 post-install:
-	@${LN} -sf ${PREFIX}/lib/erlang/lib/erl_interface-*/bin/erl_call ${PREFIX}/bin/erl_call
-	@for SECTION in 1 3 4 6; do \
+	${INSTALL_DATA} ${WRKDIR}/erlang.conf ${STAGEDIR}${PREFIX}/etc/man.d/erlang.conf
+	${LN} -sf ../lib/${ERLANG_LIB}/lib/erl_interface-${EI_VSN}/bin/erl_call ${STAGEDIR}${PREFIX}/bin/erl_call
+	for SECTION in 1 3 4 6 7; do \
 		${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_MAN} \
-			-C ${PREFIX}/lib/erlang \
+			-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB} \
 			"man/man$${SECTION}/*.$${SECTION}" || ${TRUE}; \
 	done
-	@${RM} -rf ${PREFIX}/lib/erlang/man/cat?
-.if ${PORT_OPTIONS:MDOCS}
-	@${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
-		-C ${PREFIX}/lib/erlang
-	@${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
-		${PREFIX}/lib/erlang/lib/dialyzer-*/doc/
+	@${RM} -rf ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/man/cat?
 
-	@${MKDIR} ${DOCSDIR}
+.if ${PORT_OPTIONS:MDOCS}
+	${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
+		-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}
+	${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
+		${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/lib/dialyzer-*/doc/
+	@${MKDIR} ${STAGEDIR}${DOCSDIR}
 .for FILE in ${DOC_DISTFILES}
-	@${INSTALL_DATA} ${DISTDIR}/${DIST_SUBDIR}/$$(expr ${FILE} : '\([^:]*\)') ${DOCSDIR}
+	${INSTALL_DATA} ${DISTDIR}/${DIST_SUBDIR}/$$(expr ${FILE} : '\([^:]*\)') ${STAGEDIR}/${DOCSDIR}
 .endfor
 .endif
-	@${CHOWN} -R ${SHAREOWN}:${SHAREGRP} ${PREFIX}/lib/erlang
-	@${CHMOD} -R o+rX-w,g+rX-w ${PREFIX}/lib/erlang
 
-# All non-library files.
-
-	@cd ${PREFIX}; ${FIND} lib/erlang/* -type d -empty \
-		| ${GREP} -v "^lib/erlang/lib" \
+	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type d -empty \
 		| ${SORT} \
 		| ${SED} -e 's#^#@exec ${MKDIR} %D/#g' \
 		> ${ERLANG_PLIST}
 
-	@cd ${PREFIX}; ${FIND} lib/erlang/* -type f -o -type l \
-		| ${GREP} -v "^lib/erlang/man" \
-		| ${GREP} -v "^lib/erlang/lib" \
+	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type f -o -type l \
 		| ${SORT} \
 		>> ${ERLANG_PLIST}
 
-# Stock OTP libraries.
-
-	@for LIBRARY in ${OTP_LIBS}; do \
-		cd ${PREFIX}; ${TEST} -d lib/erlang/lib/$${LIBRARY} \
-			&& ${FIND} lib/erlang/lib/$${LIBRARY} -type f -o -type l; \
-	done | ${SORT} >> ${ERLANG_PLIST}
-
-# Stock OTP library directories.
-
-	@for LIBRARY in ${OTP_LIBS}; do \
-		cd ${PREFIX}; ${TEST} -d lib/erlang/lib/$${LIBRARY} \
-			&& ${FIND} lib/erlang/lib/$${LIBRARY} -type d -empty \
-			| ${SED} -e 's#^#@exec ${MKDIR} %D/#g'; \
-	done | ${SORT} >> ${ERLANG_PLIST}
-
-	@for LIBRARY in ${OTP_LIBS}; do \
-		cd ${PREFIX}; ${TEST} -d lib/erlang/lib/$${LIBRARY} \
-			&& ${FIND} lib/erlang/lib/$${LIBRARY} -type d \
-			| ${SED} -e 's/^/@dirrm /g'; \
-	done | ${SORT} -r >> ${ERLANG_PLIST}
-
-# Other directories.
-
-	@cd ${PREFIX}; ${FIND} lib/erlang/* -type d | ${SORT} -r \
-		| ${GREP} -v "^lib/erlang/man" \
-		| ${GREP} -v "^lib/erlang/lib" \
+	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type d \
+		| ${SORT} -r \
 		| ${SED} -e 's/^/@dirrm /g' \
 		>> ${ERLANG_PLIST}
 
@@ -293,18 +226,5 @@ post-install:
 	@${ECHO_CMD} "r ${ERLANG_PLIST}"	>> ${WRKDIR}/ex.script
 	@${ECHO_CMD} "x!"			>> ${WRKDIR}/ex.script
 	@cd ${WRKDIR}; ex < ex.script
-	@${CAT} ${PKGMESSAGE}
-
-buildplt:
-	@${ECHO_CMD} =====================================================
-	@${ECHO_CMD} WARNING: building a full PLT may literally take hours
-	@${ECHO_CMD}
-	@${ECHO_CMD} You may wish to settle for the standard PLT built by
-	@${ECHO_CMD} dialyzer on the first run.
-	@${ECHO_CMD} =====================================================
-	@cd ${PREFIX}/lib/erlang/lib; ${PREFIX}/bin/dialyzer --verbose --build_plt --output_plt ${HOME}/.dialyzer_plt -c $$(find ${OTP_LIBS} -name ebin -maxdepth 1) || true
-
-.include "Makefile.lib"
-.include "Makefile.man"
 
 .include <bsd.port.mk>

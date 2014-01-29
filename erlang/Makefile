@@ -23,7 +23,7 @@ PATCH_SITES=	http://www.erlang.org/download
 MAINTAINER=	olgeni@FreeBSD.org
 COMMENT=	A functional programming language from Ericsson
 
-WRKSRC=		${WRKDIR}/otp_src_R16B03-1
+WRKSRC=		${WRKDIR}/otp_src_${ERL_RELEASE}
 
 ERLANG_LIB=	${PORTNAME}
 

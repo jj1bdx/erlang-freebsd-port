@@ -1,12 +1,16 @@
-# (Unofficial) FreeBSD Port for Erlang/OTP
+# (Unofficial) FreeBSD Port of Erlang/OTP runtime environment
 
-This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based on the `lang/erlang` Port available in the FreeBSD Port tree.
+This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based on the `lang/erlang-runtimexx` (where `xx` stands for the version number) Port available in the FreeBSD Port tree.
 
-This Port is highly experimental, so use with care.
+This Port is experimental, so use with care.
 
-Current version is for 17.0, tested on 10-STABLE/amd64, work in progress under merging from already built lang/erlang-runtime17-17.0 port.
+Current version is for 17.0, tested on 10-STABLE/amd64, work in progress under merging from already built lang/erlang-runtime17 port.
 
 This port is based on FreeBSD Ports svn r350789.
+
+## Notice on supported Port package change
+
+Since 17-APR-2014, this port is no longer a full version of Erlang Port, to avoid installation conflict with the `lang/erlang` Port, which other Ports fully depend.
 
 ## Notes
 

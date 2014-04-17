@@ -1,17 +1,13 @@
 # Created by: ruslan@shevchenko.kiev.ua
-# $FreeBSD: lang/erlang/Makefile 339103 2014-01-08 11:45:58Z olgeni $
+# $FreeBSD: head/lang/erlang-runtime17/Makefile 350789 2014-04-10 08:57:56Z olgeni $
 
 PORTNAME=	erlang
-PORTVERSION=	16.b.03.1
-PORTEPOCH=	3
+PORTVERSION=	17.0
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
-		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg \
-		http://www.erlang.se/doc/:erlangse			\
-		http://www.erlang.se/publications/:publications		\
-		http://www.sics.se/~joe/thesis/:joe			\
-		${MASTER_SITE_LOCAL:S/$/:local/:S,%SUBDIR%/,olgeni/,}
+		http://www.csd.uu.se/ftp/mirror/erlang/download/:erlangorg
+PKGNAMESUFFIX=	-runtime17
 DISTNAME=	otp_src_${ERL_RELEASE}
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX}:erlangorg	\
 		${ERLANG_MAN}:erlangorg
@@ -25,10 +21,10 @@ COMMENT=	A functional programming language from Ericsson
 
 WRKSRC=		${WRKDIR}/otp_src_${ERL_RELEASE}
 
-ERLANG_LIB=	${PORTNAME}
+ERLANG_LIB=	${PORTNAME}${PORTVERSION:C/\..*//}
 
 SUB_FILES=	pkg-message
-SUB_LIST=	TOOLS_VSN=${TOOLS_VSN}
+SUB_LIST=	ERLANG_LIB=${ERLANG_LIB}
 PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 
 MAKE_JOBS_UNSAFE=yes
@@ -57,27 +53,17 @@ PARALLELMAKE_DESC=      Enable parallel make (experimental)
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
-ERL_RELEASE=	R${PORTVERSION:S/.//g:U:S/1$/-1/}
+ERL_RELEASE=	${PORTVERSION}
 
 USES=		gmake perl5
-USE_RC_SUBR=	epmd
+USE_AUTOTOOLS=	autoconf:env
 GNU_CONFIGURE=	yes
 LDFLAGS+=	-L${LOCALBASE}/lib
-
-EI_VSN=		3.7.15
-TOOLS_VSN=	2.6.13
 
 .include <bsd.port.options.mk>
 
 .if ${PORT_OPTIONS:MDOCS}
-DISTFILES+=	${ERLANG_DOCS}:erlangorg		\
-		${DOC_DISTFILES}
-DOC_DISTFILES=	armstrong_thesis_2003.pdf:joe		\
-		bjarnelic.pdf:publications		\
-		erlang-book-part1.pdf:erlangorg		\
-		master_thesis_patterns.pdf:local	\
-		mnesia_overview.pdf:publications	\
-		programming_rules.pdf:erlangse
+DISTFILES+=	${ERLANG_DOCS}:erlangorg
 .endif
 
 # See http://wiki.freebsd.org/DTrace to learn how to enable DTrace
@@ -151,7 +137,7 @@ CONFIGURE_ARGS+=--disable-kernel-poll
 .endif
 
 .if ${PORT_OPTIONS:MGS}
-USE_TK_RUN=	yes
+USES+=		tk:run
 .endif
 
 .if ${PORT_OPTIONS:MWX}
@@ -211,13 +197,7 @@ MAKE_ARGS+=	ARCH=x86
 # rest, not in share/doc/erlang as it should, because of relative
 # links in the documentation.
 
-post-patch:
-	@${ECHO_CMD} "MANPATH ${PREFIX}/lib/erlang/man" > ${WRKDIR}/erlang.conf
-
-
 post-install:
-	${INSTALL_DATA} ${WRKDIR}/erlang.conf ${STAGEDIR}${PREFIX}/etc/man.d/erlang.conf
-	${LN} -sf ../lib/${ERLANG_LIB}/lib/erl_interface-${EI_VSN}/bin/erl_call ${STAGEDIR}${PREFIX}/bin/erl_call
 	for SECTION in 1 3 4 6 7; do \
 		${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_MAN} \
 			-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB} \
@@ -226,14 +206,10 @@ post-install:
 	@${RM} -rf ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/man/cat?
 
 .if ${PORT_OPTIONS:MDOCS}
-	${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
+	@${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
 		-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}
-	${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
+	@${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
 		${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/lib/dialyzer-*/doc/
-	@${MKDIR} ${STAGEDIR}${DOCSDIR}
-.for FILE in ${DOC_DISTFILES}
-	${INSTALL_DATA} ${DISTDIR}/${DIST_SUBDIR}/$$(expr ${FILE} : '\([^:]*\)') ${STAGEDIR}/${DOCSDIR}
-.endfor
 .endif
 
 	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type d -empty \

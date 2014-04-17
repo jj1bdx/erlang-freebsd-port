@@ -1,8 +1,6 @@
 ===========================================================================
-Installation tips:
 
-You can find an emacs mode for Erlang here:
-
-    %%LOCALBASE%%/lib/erlang/lib/tools-%%TOOLS_VSN%%/emacs
+To use this runtime port for development or testing, just prepend
+its binary path ("%%LOCALBASE%%/lib/%%ERLANG_LIB%%/bin") to your PATH variable.
 
 ===========================================================================

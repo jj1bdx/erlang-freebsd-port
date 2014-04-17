@@ -30,7 +30,7 @@ PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 MAKE_JOBS_UNSAFE=yes
 
 # local mods
-OPTIONS_DEFINE=	GCC DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE \
+OPTIONS_DEFINE=	GCC DOCS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE \
                 NATIVELIBS PARALLELMAKE
 # local mods end
 OPTIONS_SINGLE=	ODBC
@@ -42,7 +42,6 @@ KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
 SCTP_DESC=	Enable SCTP support
 SMP_DESC=	Enable SMP support
 WX_DESC=	Enable WX application
-GS_DESC=	Enable GS application (deprecated)
 DTRACE_DESC=	Enable DTrace support (experimental)
 
 ## local mods
@@ -134,10 +133,6 @@ CONFIGURE_ARGS+=--disable-hipe
 CONFIGURE_ARGS+=--enable-kernel-poll
 .else
 CONFIGURE_ARGS+=--disable-kernel-poll
-.endif
-
-.if ${PORT_OPTIONS:MGS}
-USES+=		tk:run
 .endif
 
 .if ${PORT_OPTIONS:MWX}

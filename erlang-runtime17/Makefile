@@ -1,8 +1,8 @@
 # Created by: ruslan@shevchenko.kiev.ua
-# $FreeBSD: head/lang/erlang-runtime17/Makefile 350789 2014-04-10 08:57:56Z olgeni $
+# $FreeBSD: head/lang/erlang-runtime17/Makefile 359287 2014-06-25 19:29:01Z olgeni $
 
 PORTNAME=	erlang
-PORTVERSION=	17.0
+PORTVERSION=	17.1
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
@@ -17,7 +17,7 @@ EXTRACT_ONLY=	${DISTNAME}${EXTRACT_SUFX}
 PATCH_SITES=	http://www.erlang.org/download
 
 MAINTAINER=	olgeni@FreeBSD.org
-COMMENT=	A functional programming language from Ericsson
+COMMENT=	Functional programming language from Ericsson
 
 WRKSRC=		${WRKDIR}/otp_src_${ERL_RELEASE}
 
@@ -29,12 +29,7 @@ PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 
 MAKE_JOBS_UNSAFE=yes
 
-# local mods
-OPTIONS_DEFINE=	GCC DOCS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE \
-                NATIVELIBS PARALLELMAKE
-# local mods end
-OPTIONS_SINGLE=	ODBC
-OPTIONS_SINGLE_ODBC=	IODBC UNIXODBC
+OPTIONS_DEFINE=	GCC DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE
 
 GCC_DESC=	Use current GCC
 HIPE_DESC=	Build native HiPE compiler
@@ -42,13 +37,8 @@ KQUEUE_DESC=	Enable Kernel Poll (kqueue) support
 SCTP_DESC=	Enable SCTP support
 SMP_DESC=	Enable SMP support
 WX_DESC=	Enable WX application
+GS_DESC=	Enable GS application (deprecated)
 DTRACE_DESC=	Enable DTrace support (experimental)
-
-## local mods
-## non-standard flags
-NATIVELIBS_DESC=        Enable Native Libraries
-PARALLELMAKE_DESC=      Enable parallel make (experimental)
-## local mods end
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
@@ -72,27 +62,6 @@ DISTFILES+=	${ERLANG_DOCS}:erlangorg
 # If you run Erlang and get a message resembling "WARNING: number of
 # probes fixed does not match the number of defined probes (54 != 132,
 # respectively)" you probably misconfigured DTrace in some way.
-
-## local mods
-
-.if ${PORT_OPTIONS:MPARALLELMAKE}
-.undef MAKE_JOBS_UNSAFE
-.else
-MAKE_JOBS_UNSAFE=yes
-.endif
-
-# Native Libraries are still experimental
-# at least on FreeBSD/amd64
-.if ${PORT_OPTIONS:MNATIVELIBS}
-CONFIGURE_ARGS+=--enable-native-libs
-.else
-CONFIGURE_ARGS+=--disable-native-libs
-.endif
-
-### local mods end
-
-# local comment:
-# clang works OK with DTrace, so this IGNORE statement might not be needed
 
 .if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC}
 IGNORE=		DTRACE support on amd64 requires GCC option
@@ -135,6 +104,10 @@ CONFIGURE_ARGS+=--enable-kernel-poll
 CONFIGURE_ARGS+=--disable-kernel-poll
 .endif
 
+.if ${PORT_OPTIONS:MGS}
+USES+=		tk:run
+.endif
+
 .if ${PORT_OPTIONS:MWX}
 USE_WX=		2.8+
 WX_COMPS=	wx contrib
@@ -144,11 +117,7 @@ CONFIGURE_ARGS+=--with-wx-config=${WX_CONFIG}
 
 .if ${PORT_OPTIONS:MODBC}
 CONFIGURE_ARGS+=--with-odbc
-.if ${PORT_OPTIONS:MUNIXODBC}
-LIB_DEPENDS+=	odbc:${PORTSDIR}/databases/unixODBC
-.elif ${PORT_OPTIONS:MIODBC}
-LIB_DEPENDS+=	iodbc:${PORTSDIR}/databases/libiodbc
-.endif
+LIB_DEPENDS+=	libodbc.so:${PORTSDIR}/databases/unixODBC
 .else
 CONFIGURE_ARGS+=--without-odbc
 .endif

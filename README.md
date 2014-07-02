@@ -4,9 +4,9 @@ This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based o
 
 This Port is experimental, so use with care.
 
-Current version is for 17.0, tested on 10-STABLE/amd64.
+Current version is for 17.1, tested on 10-STABLE/amd64.
 
-This port is based on FreeBSD Ports svn r350789.
+This port is based on FreeBSD Ports svn r359287.
 
 ## Notice on supported Port package change
 
@@ -14,7 +14,7 @@ Since 17-APR-2014, this port is no longer a full version of Erlang Port, to avoi
 
 ## Notes
 
-If you build with Java support (such as jinterface), install the port `java/openjdk6` before the installation of this port. Installing the OpenJDK as an dependency of this port will not work.
+If you build with Java support (such as jinterface), install the default Java SDK port `java/openjdk7` before the installation of this port. Installing the OpenJDK as an dependency of this port will not work.
 
 For (9-STABLE) r251856 and earlier, consider applying the patch in FreeBSD PR `bin/171678` to compile the dtrace version. The patch is included under the directory `PR-171678-dtrace-patch`. See `PR-171678-dtrace-patch/fix-dtrace-build.md` for the further details. Note: this patch is no longer needed for the FreeBSD 9-STABLE r251857 and later; the PR 171678 code has been merged.
 

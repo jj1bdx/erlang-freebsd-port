@@ -29,7 +29,8 @@ PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 
 MAKE_JOBS_UNSAFE=yes
 
-OPTIONS_DEFINE=	GCC DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE
+OPTIONS_DEFINE=	GCC DOCS GS HIPE JAVA KQUEUE ODBC OPENSSL SCTP SMP THREADS WX DTRACE \
+				NATIVELIBS PARALLELMAKE
 
 GCC_DESC=	Use current GCC
 HIPE_DESC=	Build native HiPE compiler
@@ -39,6 +40,12 @@ SMP_DESC=	Enable SMP support
 WX_DESC=	Enable WX application
 GS_DESC=	Enable GS application (deprecated)
 DTRACE_DESC=	Enable DTrace support (experimental)
+
+## local mods
+## non-standard flags
+NATIVELIBS_DESC=        Enable Native Libraries
+PARALLELMAKE_DESC=      Enable parallel make (experimental)
+## local mods end
 
 OPTIONS_DEFAULT=SMP OPENSSL THREADS SCTP KQUEUE
 
@@ -62,6 +69,27 @@ DISTFILES+=	${ERLANG_DOCS}:erlangorg
 # If you run Erlang and get a message resembling "WARNING: number of
 # probes fixed does not match the number of defined probes (54 != 132,
 # respectively)" you probably misconfigured DTrace in some way.
+
+## local mods
+
+.if ${PORT_OPTIONS:MPARALLELMAKE}
+.undef MAKE_JOBS_UNSAFE
+.else
+MAKE_JOBS_UNSAFE=yes
+.endif
+
+# Native Libraries are still experimental
+# at least on FreeBSD/amd64
+.if ${PORT_OPTIONS:MNATIVELIBS}
+CONFIGURE_ARGS+=--enable-native-libs
+.else
+CONFIGURE_ARGS+=--disable-native-libs
+.endif
+
+### local mods end
+
+# local comment:
+# clang works OK with DTrace, so this IGNORE statement might not be needed
 
 .if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC}
 IGNORE=		DTRACE support on amd64 requires GCC option

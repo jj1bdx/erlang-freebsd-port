@@ -51,3 +51,4 @@ At least you've got to do the following things:
 ## Acknowledgment
 
 * Jimmy Olgeni, for maintaining the original Erlang-related Ports of FreeBSD.
+* Stefan Grundmann, for native libs patch based on the erlang-questions mailing list article <http://erlang.org/pipermail/erlang-questions/2014-April/078460.html>

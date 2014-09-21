@@ -82,6 +82,9 @@ MAKE_JOBS_UNSAFE=yes
 # at least on FreeBSD/amd64
 .if ${PORT_OPTIONS:MNATIVELIBS}
 CONFIGURE_ARGS+=--enable-native-libs
+.if ${PORT_OPTIONS:MSMP}
+EXTRA_PATCHES+=		${FILESDIR}/extra-patch-erts_etc_common_erlc.c
+.endif
 .else
 CONFIGURE_ARGS+=--disable-native-libs
 .endif

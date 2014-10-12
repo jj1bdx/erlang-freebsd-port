@@ -4,9 +4,9 @@ This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based o
 
 This Port is experimental, so use with care.
 
-Current version is for 17.1, tested on 10-STABLE/amd64.
+Current version is for 17.3\_1, tested on 10-STABLE/amd64.
 
-This port is based on FreeBSD Ports svn r359287.
+This port is based on FreeBSD Ports svn r370520.
 
 ## Notice on supported Port package change
 

@@ -1,8 +1,9 @@
 # Created by: ruslan@shevchenko.kiev.ua
-# $FreeBSD: head/lang/erlang-runtime17/Makefile 368443 2014-09-18 10:52:19Z olgeni $
+# $FreeBSD: head/lang/erlang-runtime17/Makefile 370520 2014-10-09 12:48:31Z olgeni $
 
 PORTNAME=	erlang
 PORTVERSION=	17.3
+PORTREVISION=	1
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
@@ -25,7 +26,6 @@ ERLANG_LIB=	${PORTNAME}${PORTVERSION:C/\..*//}
 
 SUB_FILES=	pkg-message
 SUB_LIST=	ERLANG_LIB=${ERLANG_LIB}
-PLIST_SUB=	ERLANG_LIB=${ERLANG_LIB}
 
 MAKE_JOBS_UNSAFE=yes
 
@@ -39,7 +39,7 @@ SCTP_DESC=	Enable SCTP support
 SMP_DESC=	Enable SMP support
 WX_DESC=	Enable WX application
 GS_DESC=	Enable GS application (deprecated)
-DTRACE_DESC=	Enable DTrace support (experimental)
+DTRACE_DESC=	Enable DTrace support
 
 ## local mods
 ## non-standard flags
@@ -93,9 +93,10 @@ CONFIGURE_ARGS+=--disable-native-libs
 
 # local comment:
 # clang works OK with DTrace, so this IGNORE statement might not be needed
-
+.if ${OSVERSION} < 1000000
 .if ${ARCH} == "amd64" && ${PORT_OPTIONS:MDTRACE} && ! ${PORT_OPTIONS:MGCC}
 IGNORE=		DTRACE support on amd64 requires GCC option
+.endif
 .endif
 
 .if ${PORT_OPTIONS:MGCC}
@@ -155,7 +156,6 @@ CONFIGURE_ARGS+=--without-odbc
 
 ERLANG_MAN=	otp_doc_man_${ERL_RELEASE}.tar.gz
 ERLANG_DOCS=	otp_doc_html_${ERL_RELEASE}.tar.gz
-ERLANG_PLIST=	${WRKDIR}/pkg-plist
 
 .if ${PORT_OPTIONS:MTHREADS}
 CONFIGURE_ARGS+=--enable-threads
@@ -198,34 +198,22 @@ post-install:
 			-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB} \
 			"man/man$${SECTION}/*.$${SECTION}" || ${TRUE}; \
 	done
-	@${RM} -rf ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/man/cat?
+	${RM} -rf ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/man/cat?
 
 .if ${PORT_OPTIONS:MDOCS}
-	@${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
+	${TAR} --unlink -xzpf ${DISTDIR}/${DIST_SUBDIR}/${ERLANG_DOCS} \
 		-C ${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}
-	@${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
+	${INSTALL_DATA} ${WRKSRC}/lib/dialyzer/doc/*.txt \
 		${STAGEDIR}${PREFIX}/lib/${ERLANG_LIB}/lib/dialyzer-*/doc/
 .endif
 
 	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type d -empty \
 		| ${SORT} \
-		| ${SED} -e 's#^#@exec ${MKDIR} %D/#g' \
-		> ${ERLANG_PLIST}
+		| ${SED} -e 's#^#@dir #g' \
+		> ${TMPPLIST}
 
 	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type f -o -type l \
 		| ${SORT} \
-		>> ${ERLANG_PLIST}
-
-	@cd ${STAGEDIR}${PREFIX}; ${FIND} lib/${ERLANG_LIB}/* -type d \
-		| ${SORT} -r \
-		| ${SED} -e 's/^/@dirrm /g' \
-		>> ${ERLANG_PLIST}
-
-	@${ECHO_CMD} "r ${TMPPLIST}"		> ${WRKDIR}/ex.script
-	@${ECHO_CMD} "/Insert PLIST here"	>> ${WRKDIR}/ex.script
-	@${ECHO_CMD} "d"			>> ${WRKDIR}/ex.script
-	@${ECHO_CMD} "r ${ERLANG_PLIST}"	>> ${WRKDIR}/ex.script
-	@${ECHO_CMD} "x!"			>> ${WRKDIR}/ex.script
-	@cd ${WRKDIR}; ex < ex.script
+		>> ${TMPPLIST}
 
 .include <bsd.port.mk>

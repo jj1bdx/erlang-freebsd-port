@@ -1,9 +1,9 @@
 # Created by: ruslan@shevchenko.kiev.ua
-# $FreeBSD: head/lang/erlang-runtime17/Makefile 370520 2014-10-09 12:48:31Z olgeni $
+# $FreeBSD: head/lang/erlang-runtime17/Makefile 373183 2014-11-23 22:31:25Z olgeni $
 
 PORTNAME=	erlang
 PORTVERSION=	17.3
-PORTREVISION=	1
+PORTREVISION=	2
 CATEGORIES=	lang parallel java
 MASTER_SITES=	http://www.erlang.org/download/:erlangorg		\
 		http://erlang.stacken.kth.se/download/:erlangorg	\
@@ -53,6 +53,7 @@ ERL_RELEASE=	${PORTVERSION}
 
 USES=		gmake perl5
 USE_AUTOTOOLS=	autoconf:env
+USE_PERL5=	build
 GNU_CONFIGURE=	yes
 LDFLAGS+=	-L${LOCALBASE}/lib
 

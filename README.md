@@ -1,4 +1,12 @@
-# (Unofficial) FreeBSD Port of Erlang/OTP runtime environment
+# This archive is historic: please use FreeBSD official Ports
+
+29-JUN-2015: I will not delete this archive for historic reference purpose, but
+I will no longer maintain this archive either. Jimmy Olgeni has been actively
+maintaining the original Erlang and other related ports.
+
+## For historic purpose only: (Unofficial) FreeBSD Port of Erlang/OTP runtime environment
+
+*Note: this archive is no longer maintained*
 
 This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based on the `lang/erlang-runtimexx` (where `xx` stands for the version number) Port available in the FreeBSD Port tree.
 

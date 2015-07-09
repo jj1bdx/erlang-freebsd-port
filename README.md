@@ -1,5 +1,7 @@
 # This archive is historic: please use FreeBSD official Ports
 
+The official port status in Freshports is <https://www.freshports.org/lang/erlang/>.
+
 29-JUN-2015: I will not delete this archive for historic reference purpose, but
 I will no longer maintain this archive either. Jimmy Olgeni has been actively
 maintaining the original Erlang and other related ports.

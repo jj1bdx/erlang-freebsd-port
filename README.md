@@ -4,6 +4,8 @@ The official port status in Freshports is <https://www.freshports.org/lang/erlan
 
 ## Tentative revival: for 18.2
 
+18-DEC-2015 1400UTC: The HiPE patch has been merged to OTP 18.2.1.
+
 18-DEC-2015: This is an unofficial experimental FreeBSD Erlang Port enabling
 HiPE for 18.2 on 10.2-STABLE, built based on Jimmy Olgeni's Ports `lang/erlang`
 and `lang/erlang-runtime18`.

@@ -8,6 +8,8 @@ The official port status in Freshports is <https://www.freshports.org/lang/erlan
 HiPE for 18.2 on 10.2-STABLE, built based on Jimmy Olgeni's Ports `lang/erlang`
 and `lang/erlang-runtime18`.
 
+See https://github.com/erlang/otp/pull/926 for the patch details for HiPE.
+
 ## Please check FreeBSD official Ports first.
 
 I will no longer maintain this archive regularly. 

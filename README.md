@@ -2,7 +2,16 @@
 
 The official port status in Freshports is <https://www.freshports.org/lang/erlang/>.
 
-## Tentative revival: for 18.2
+## Please check FreeBSD official Ports first.
+
+I will no longer maintain this archive regularly. 
+
+Jimmy Olgeni has been actively maintaining the original Erlang and other
+related ports.
+
+## Obsolete: tentative revival: for 18.2
+
+18-DEC-2015 1422UTC: 18.2.1 merged to Ports r403962. See <http://svnweb.freebsd.org/ports?view=revision&revision=403962>. Thx Jimmy Olgeni!
 
 18-DEC-2015 1400UTC: The HiPE patch has been merged to OTP 18.2.1.
 
@@ -11,13 +20,6 @@ HiPE for 18.2 on 10.2-STABLE, built based on Jimmy Olgeni's Ports `lang/erlang`
 and `lang/erlang-runtime18`.
 
 See https://github.com/erlang/otp/pull/926 for the patch details for HiPE.
-
-## Please check FreeBSD official Ports first.
-
-I will no longer maintain this archive regularly. 
-
-Jimmy Olgeni has been actively maintaining the original Erlang and other
-related ports.
 
 ## DTrace support
 

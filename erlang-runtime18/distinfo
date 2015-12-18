@@ -1,0 +1,6 @@
+SHA256 (erlang/otp_src_18.2.tar.gz) = 43de28ac307d2ecf26b6134647f8de1cdf7b419517514a7d5c2af04284fb3fd0
+SIZE (erlang/otp_src_18.2.tar.gz) = 68106886
+SHA256 (erlang/otp_doc_man_18.2.tar.gz) = 3695f3a10652e1e1b06d14639d9690d5e533c5e3b831c37f80214f68b8c56a29
+SIZE (erlang/otp_doc_man_18.2.tar.gz) = 1390885
+SHA256 (erlang/otp_doc_html_18.2.tar.gz) = 15f262ef6b9fb31063d485cf4d0016e22279dabcfa1c9e3670f0c7ca8e84f60f
+SIZE (erlang/otp_doc_html_18.2.tar.gz) = 34205883

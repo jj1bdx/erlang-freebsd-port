@@ -1,55 +1,23 @@
-# This archive is historic: please use FreeBSD official Ports
+# A private FreeBSD Erlang Port
 
 The official port status in Freshports is <https://www.freshports.org/lang/erlang/>.
 
-29-JUN-2015: I will not delete this archive for historic reference purpose, but
-I will no longer maintain this archive either. Jimmy Olgeni has been actively
-maintaining the original Erlang and other related ports.
+## Tentative revival: for 18.2
 
-## For historic purpose only: (Unofficial) FreeBSD Port of Erlang/OTP runtime environment
+18-DEC-2015: This is an unofficial experimental FreeBSD Erlang Port enabling
+HiPE for 18.2 on 10.2-STABLE, built based on Jimmy Olgeni's Ports `lang/erlang`
+and `lang/erlang-runtime18`.
 
-*Note: this archive is no longer maintained*
+## Please check FreeBSD official Ports first.
 
-This is an unofficial FreeBSD Port file for Erlang/OTP. The contents are based on the `lang/erlang-runtimexx` (where `xx` stands for the version number) Port available in the FreeBSD Port tree.
+I will no longer maintain this archive regularly. 
 
-This Port is experimental, so use with care.
-
-Current version is for 17.3\_1, tested on 10-STABLE/amd64.
-
-This port is based on FreeBSD Ports svn r370520.
-
-## Notice on supported Port package change
-
-Since 17-APR-2014, this port is no longer a full version of Erlang Port, to avoid installation conflict with the `lang/erlang` Port on which other Ports fully depend.
-
-## Notes
-
-If you build with Java support (such as jinterface), install the default Java SDK port `java/openjdk7` before the installation of this port. Installing the OpenJDK as an dependency of this port will not work.
-
-For (9-STABLE) r251856 and earlier, consider applying the patch in FreeBSD PR `bin/171678` to compile the dtrace version. The patch is included under the directory `PR-171678-dtrace-patch`. See `PR-171678-dtrace-patch/fix-dtrace-build.md` for the further details. Note: this patch is no longer needed for the FreeBSD 9-STABLE r251857 and later; the PR 171678 code has been merged.
-
-For 9-STABLE and earlier, the `make config` flag `GCC46` must be enabled when building the DTrace-enabled version on amd64. Symptom: when building `erts/emulator/beam/erl_nif.c` with the stock cc (4.2.1) on 9.1-PRERELEASE/amd64, the compiler takes too much CPU time and does not proceed. This problem will be solved by using gcc 4.6 in the Ports library `lang/gcc46`. Related info: <http://www.freebsd.org/cgi/query-pr.cgi?pr=147451>. (Thanks Jimmy Olgeni for helping chasing this bug)
-
-TODO: for 10-STABLE/amd64, `clang` can be used for building DTrace-enabled version, but this option is not enabled yet.
-
-In this Port parallel make is *disabled* as default. Use the `make config` option `PARALLELMAKE`.
-
-`USE_OPENSSL` for enabling `bsd.openssl.mk` does not seem to work, 
-so it is not explicitly set in the `Makefile`. 
-The library search path decides what to link,
-and it seems `/usr/local/lib` takes precedence over `/usr/lib`.
-You can verify which one is linked by
-`objdump -x /usr/local/lib/erlang/lib/crypto-MODULE_VERSION/priv/lib/crypto.so`
-and check out the version numbers for `libssl.so.*`.
-
-Native Libraries compilation flag is now supported as `NATIVELIBS` in `make config`.
-On amd64, however, it does not work on the libraries yet.
+Jimmy Olgeni has been actively maintaining the original Erlang and other
+related ports.
 
 ## DTrace support
 
 <http://wiki.freebsd.org/DTrace> is a must read for testing DTrace.
-
-From r249549, 9-STABLE GENERIC kernel includes DTrace support. See <http://lists.freebsd.org/pipermail/svn-src-all/2013-April/067616.html> for the details.
 
 At least you've got to do the following things:
 
